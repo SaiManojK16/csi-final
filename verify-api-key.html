@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick API Key Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: white;
+            color: #333;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin: 10px 0;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #10b981;
+        }
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+        .testing {
+            background: #fef3c7;
+            color: #78350f;
+            border: 2px solid #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔑 Gemini API Key Direct Test</h1>
+        <p>This will test your API key directly using a simple HTTP request.</p>
+        
+        <button onclick="testAPIKey()">🧪 Test API Key</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script type="module">
+        window.testAPIKey = async function() {
+            const resultDiv = document.getElementById('result');
+            const API_KEY = 'AIzaSyDY9WS_szPT_zKl_ujB9AsN0wWkvgeeGl0';
+            
+            resultDiv.className = 'testing';
+            resultDiv.textContent = '⏳ Testing API key...\nPlease wait...';
+            
+            try {
+                // Test using REST API directly
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: 'Say "API is working!" in one sentence.'
+                            }]
+                        }]
+                    })
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                if (response.ok && data.candidates) {
+                    const text = data.candidates[0].content.parts[0].text;
+                    resultDiv.className = 'success';
+                    resultDiv.textContent = `✅ SUCCESS! API Key is Valid!\n\n` +
+                        `Response from Gemini:\n"${text}"\n\n` +
+                        `Status: ${response.status}\n` +
+                        `API Key: ${API_KEY.substring(0, 15)}...\n\n` +
+                        `🎉 Your API key works perfectly!\n` +
+                        `The issue must be elsewhere in the integration.`;
+                } else {
+                    resultDiv.className = 'error';
+                    resultDiv.textContent = `❌ API Error\n\n` +
+                        `Status: ${response.status}\n` +
+                        `Error: ${JSON.stringify(data, null, 2)}\n\n`;
+                    
+                    if (response.status === 400) {
+                        resultDiv.textContent += `\n🔑 Possible Issue: Invalid API Key or bad request format`;
+                    } else if (response.status === 403) {
+                        resultDiv.textContent += `\n🔒 Possible Issue: API key not authorized for this service`;
+                    } else if (response.status === 429) {
+                        resultDiv.textContent += `\n📊 Possible Issue: API quota exceeded`;
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.className = 'error';
+                resultDiv.textContent = `❌ Connection Error\n\n` +
+                    `Error: ${error.message}\n\n` +
+                    `This could be:\n` +
+                    `- Network/Internet connection issue\n` +
+                    `- CORS policy blocking the request\n` +
+                    `- Firewall blocking Google APIs\n\n` +
+                    `Full error:\n${error.stack}`;
+            }
+        }
+    </script>
+</body>
+</html>
+
