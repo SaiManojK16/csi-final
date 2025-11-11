@@ -1,0 +1,388 @@
+/* ================================================
+   TOGGLE & TOGGLE GROUP COMPONENTS
+   Two-state buttons for filters, preferences, views
+   ================================================ */
+
+/* Toggle Base */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: 8px 12px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--gray-700);
+  background: white;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.toggle:hover {
+  background: var(--gray-50);
+  border-color: var(--gray-400);
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}
+
+/* Toggle Active State (On) */
+.toggle[data-state="on"],
+.toggle.active {
+  background: var(--primary-600);
+  border-color: var(--primary-600);
+  color: white;
+}
+
+.toggle[data-state="on"]:hover,
+.toggle.active:hover {
+  background: var(--primary-700);
+  border-color: var(--primary-700);
+}
+
+/* Toggle Disabled */
+.toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Toggle Icon */
+.toggle-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* Toggle Group Container */
+.toggle-group {
+  display: inline-flex;
+  gap: 0;
+}
+
+/* Toggle Group Item */
+.toggle-group-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  padding: 8px 16px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--gray-700);
+  background: white;
+  border: 1px solid var(--gray-300);
+  border-right-width: 0;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  user-select: none;
+  white-space: nowrap;
+  position: relative;
+}
+
+.toggle-group-item:first-child {
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.toggle-group-item:last-child {
+  border-radius: 0 var(--radius) var(--radius) 0;
+  border-right-width: 1px;
+}
+
+.toggle-group-item:only-child {
+  border-radius: var(--radius);
+  border-right-width: 1px;
+}
+
+.toggle-group-item:hover {
+  background: var(--gray-50);
+  z-index: 1;
+}
+
+.toggle-group-item:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+  z-index: 2;
+}
+
+/* Toggle Group Item Active State */
+.toggle-group-item[data-state="on"],
+.toggle-group-item.active {
+  background: var(--primary-600);
+  border-color: var(--primary-600);
+  color: white;
+  z-index: 1;
+}
+
+.toggle-group-item[data-state="on"]:hover,
+.toggle-group-item.active:hover {
+  background: var(--primary-700);
+  border-color: var(--primary-700);
+}
+
+/* Ensure active items have full borders */
+.toggle-group-item[data-state="on"],
+.toggle-group-item.active {
+  border-right-width: 1px;
+}
+
+.toggle-group-item[data-state="on"] + .toggle-group-item,
+.toggle-group-item.active + .toggle-group-item {
+  border-left-width: 0;
+}
+
+/* Toggle Group Disabled */
+.toggle-group-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Outline Variant */
+.toggle-group.variant-outline .toggle-group-item[data-state="on"],
+.toggle-group.variant-outline .toggle-group-item.active {
+  background: white;
+  color: var(--primary-600);
+  border-color: var(--primary-600);
+  border-width: 2px;
+  padding: 7px 15px; /* Compensate for thicker border */
+}
+
+/* Separated Variant (with spacing) */
+.toggle-group.separated {
+  gap: var(--spacing-xs);
+}
+
+.toggle-group.separated .toggle-group-item {
+  border-radius: var(--radius);
+  border-right-width: 1px;
+}
+
+.toggle-group.separated .toggle-group-item + .toggle-group-item {
+  border-left-width: 1px;
+}
+
+/* Size Variants */
+.toggle-sm,
+.toggle-group-sm .toggle-group-item {
+  padding: 6px 10px;
+  font-size: var(--text-xs);
+}
+
+.toggle-md,
+.toggle-group-md .toggle-group-item {
+  padding: 8px 16px;
+  font-size: var(--text-sm);
+}
+
+.toggle-lg,
+.toggle-group-lg .toggle-group-item {
+  padding: 10px 20px;
+  font-size: var(--text-base);
+}
+
+/* Icon Only Variant */
+.toggle-icon-only,
+.toggle-group .toggle-group-item.icon-only {
+  padding: 8px;
+  min-width: 36px;
+}
+
+.toggle-group-sm .toggle-group-item.icon-only {
+  padding: 6px;
+  min-width: 28px;
+}
+
+.toggle-group-lg .toggle-group-item.icon-only {
+  padding: 10px;
+  min-width: 40px;
+}
+
+/* Color Variants */
+.toggle-success[data-state="on"],
+.toggle-group .toggle-group-item.toggle-success[data-state="on"] {
+  background: var(--success-600);
+  border-color: var(--success-600);
+}
+
+.toggle-warning[data-state="on"],
+.toggle-group .toggle-group-item.toggle-warning[data-state="on"] {
+  background: var(--warning-500);
+  border-color: var(--warning-500);
+  color: var(--gray-900);
+}
+
+.toggle-error[data-state="on"],
+.toggle-group .toggle-group-item.toggle-error[data-state="on"] {
+  background: var(--error-600);
+  border-color: var(--error-600);
+}
+
+/* Special Toggles for Acceptly */
+
+/* Difficulty Toggle */
+.toggle-difficulty-easy[data-state="on"] {
+  background: var(--success-600);
+  border-color: var(--success-600);
+}
+
+.toggle-difficulty-medium[data-state="on"] {
+  background: var(--warning-500);
+  border-color: var(--warning-500);
+  color: var(--gray-900);
+}
+
+.toggle-difficulty-hard[data-state="on"] {
+  background: var(--error-600);
+  border-color: var(--error-600);
+}
+
+/* Icon State Changes */
+.toggle-group-item[data-state="on"] .toggle-icon-star {
+  fill: #facc15;
+  stroke: #facc15;
+}
+
+.toggle-group-item[data-state="on"] .toggle-icon-heart {
+  fill: #ef4444;
+  stroke: #ef4444;
+}
+
+.toggle-group-item[data-state="on"] .toggle-icon-bookmark {
+  fill: #3b82f6;
+  stroke: #3b82f6;
+}
+
+/* Mobile Responsive */
+@media (max-width: 640px) {
+  .toggle-group {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .toggle-group-item {
+    flex: 1;
+    min-width: fit-content;
+  }
+
+  /* Stack vertically on very small screens */
+  .toggle-group.stack-mobile {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .toggle-group.stack-mobile .toggle-group-item {
+    width: 100%;
+    border-radius: 0;
+    border-right-width: 1px;
+    border-bottom-width: 0;
+  }
+
+  .toggle-group.stack-mobile .toggle-group-item:first-child {
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+
+  .toggle-group.stack-mobile .toggle-group-item:last-child {
+    border-radius: 0 0 var(--radius) var(--radius);
+    border-bottom-width: 1px;
+  }
+}
+
+/* Loading State */
+.toggle.loading,
+.toggle-group-item.loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.toggle.loading::after,
+.toggle-group-item.loading::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Badge on Toggle */
+.toggle-badge,
+.toggle-group-item .toggle-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  margin-left: var(--spacing-xs);
+  font-size: 10px;
+  font-weight: var(--font-bold);
+  background: var(--gray-200);
+  color: var(--gray-700);
+  border-radius: var(--radius-full);
+  line-height: 1;
+}
+
+.toggle[data-state="on"] .toggle-badge,
+.toggle-group-item[data-state="on"] .toggle-badge {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+/* Accessibility */
+.toggle:focus-visible,
+.toggle-group-item:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+  z-index: 3;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .toggle[data-state="on"],
+  .toggle-group-item[data-state="on"] {
+    border: 3px solid var(--primary-600);
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .toggle,
+  .toggle-group-item {
+    transition: none;
+  }
+
+  .toggle.loading::after,
+  .toggle-group-item.loading::after {
+    animation: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .toggle,
+  .toggle-group {
+    border: 1px solid black;
+  }
+
+  .toggle[data-state="on"],
+  .toggle-group-item[data-state="on"] {
+    background: black;
+    color: white;
+  }
+}
+

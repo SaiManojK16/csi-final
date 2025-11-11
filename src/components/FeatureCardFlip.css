@@ -1,0 +1,111 @@
+/* Feature Cards – Friendly Academic Theme */
+
+.feature-card-static {
+  position: relative;
+  background: var(--brand-white, #ffffff);
+  border-radius: var(--radius-lg, 28px);
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 24px 52px rgba(31, 42, 68, 0.12);
+  border: 1.5px solid rgba(31, 42, 68, 0.05);
+  overflow: hidden;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  min-height: 280px;
+}
+
+.feature-card-static::before {
+  content: '';
+  position: absolute;
+  inset: -40% 40% 60% -40%;
+  background: linear-gradient(135deg, rgba(255, 138, 101, 0.18), rgba(46, 196, 182, 0.16));
+  opacity: 0.85;
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.feature-card-static:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 60px rgba(31, 42, 68, 0.16);
+}
+
+.card-icon {
+  position: relative;
+  z-index: 1;
+  width: 68px;
+  height: 68px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  font-size: 34px;
+  background: linear-gradient(135deg, rgba(255, 138, 101, 0.16), rgba(255, 209, 102, 0.16));
+  color: var(--brand-coral, #ff8a65);
+  border: 1.5px solid rgba(255, 138, 101, 0.28);
+  box-shadow: 0 12px 24px rgba(255, 138, 101, 0.18);
+}
+
+.feature-card-static h3 {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--brand-navy, #1f2a44);
+  letter-spacing: -0.01em;
+}
+
+.feature-card-static p {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: 15px;
+  color: var(--brand-muted, #6b7280);
+  line-height: 1.7;
+}
+
+.features-list {
+  position: relative;
+  z-index: 1;
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.features-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--brand-slate, #475569);
+  font-weight: 500;
+}
+
+.features-list li::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, var(--brand-teal, #2ec4b6), var(--brand-coral, #ff8a65));
+  box-shadow: 0 4px 10px rgba(46, 196, 182, 0.25);
+}
+
+@media (max-width: 640px) {
+  .feature-card-static {
+    padding: 28px 24px;
+    border-radius: 22px;
+  }
+
+  .card-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 30px;
+  }
+
+  .feature-card-static h3 {
+    font-size: 20px;
+  }
+}
