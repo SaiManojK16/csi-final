@@ -1,33 +1,57 @@
 {
   "name": "acceptly",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Acceptly - From Mistakes to Mastery, One Transition at a Time",
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "type-check": "tsc --noEmit"
-  },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^13.5.0",
     "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "framer-motion": "^12.23.24",
     "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.553.0",
     "mongoose": "^8.19.2",
-    "next": "^14.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^5.5.0"
+    "react-icons": "^5.5.0",
+    "react-router-dom": "^7.9.5",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "server": "node server/server.js",
+    "dev": "concurrently \"npm run server\" \"npm start\""
+  },
+  "proxy": "http://localhost:5001",
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/jsonwebtoken": "^9.0.5",
-    "@types/node": "^20.11.0",
-    "@types/react": "^18.2.48",
-    "@types/react-dom": "^18.2.18",
-    "eslint": "^8.56.0",
-    "eslint-config-next": "^14.2.0",
-    "typescript": "^5.3.3"
+    "concurrently": "^9.2.1",
+    "nodemon": "^3.1.10"
   }
 }
