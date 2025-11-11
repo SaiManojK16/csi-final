@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
-import { getProblemById } from '../data/problemsData';
-import apiService from '../services/apiService';
-import { useAuth } from '../context/AuthContext';
+import { getProblemById } from '../../data/problemsData';
+import apiService from '../../services/apiService';
+import { useAuth } from '../../context/AuthContext';
 import {
   AlertDialog,
   AlertDialogHeader,
@@ -11,14 +11,14 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction
-} from '../components/AlertDialog';
-import { ProfileEditDialog } from '../components/ProfileEditDialog';
-import QuizResults from '../components/QuizResults';
+} from '../AlertDialog';
+import { ProfileEditDialog } from '../ProfileEditDialog';
+import QuizResults from '../QuizResults';
 import './QuizPage.css';
 
 const QuizPage = () => {
   const { quizId } = useParams();
-  const navigate = useNavigate();
+  const router = useRouter();
   const location = useLocation();
   const { user, logout } = useAuth();
   const quiz = getProblemById(quizId);
@@ -90,7 +90,7 @@ const QuizPage = () => {
   const handleConfirmLogout = () => {
     logout();
     setLogoutDialogOpen(false);
-    navigate('/');
+    router.push('/');
   };
 
   const handleEditProfileClick = () => {
@@ -126,7 +126,7 @@ const QuizPage = () => {
       <div className="quiz-page">
         <div className="error-container">
           <h2>Quiz Not Found</h2>
-          <button onClick={() => navigate('/problems')}>
+          <button onClick={() => router.push('/problems')}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '6px' }}>
               <polyline points="15 18 9 12 15 6"/>
             </svg>
@@ -224,7 +224,7 @@ const QuizPage = () => {
           <div className="quiz-panel-header">
             <button 
               className="quiz-back-btn"
-              onClick={() => navigate('/problems')}
+              onClick={() => router.push('/problems')}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <polyline points="15 18 9 12 15 6"/>
@@ -396,7 +396,7 @@ const QuizPage = () => {
           answers={answers}
           onClose={() => {
             setShowResults(false);
-            navigate('/problems');
+            router.push('/problems');
           }}
           onRetake={() => {
             setShowResults(false);

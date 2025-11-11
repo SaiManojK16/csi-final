@@ -1,19 +1,18 @@
 import React from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useAuth } from '../../context/AuthContext';
-import FeatureCardFlip from '../FeatureCardFlip';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import FeatureCardFlip from '../components/FeatureCardFlip';
 import './LandingPage.css';
 
 const LandingPage = () => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
   const handleGetStarted = () => {
     if (isAuthenticated) {
-      router.push('/dashboard');
+      navigate('/dashboard');
     } else {
-      router.push('/auth');
+      navigate('/auth');
     }
   };
 

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { HiAcademicCap, HiSparkles } from 'react-icons/hi2';
 import {
   AlertDialog,
@@ -9,19 +10,19 @@ import {
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction
-} from '../components/AlertDialog';
-import { ProfileEditDialog } from '../components/ProfileEditDialog';
-import { getProblemById, getAllProblems } from '../data/problemsData';
-import AutomataBuilder from '../components/AutomataBuilder';
-import StringTester from '../components/StringTester';
-import AIHelper from '../components/AIHelper';
-import { useAuth } from '../context/AuthContext';
-import apiService from '../services/apiService';
+} from '../AlertDialog';
+import { ProfileEditDialog } from '../ProfileEditDialog';
+import { getProblemById, getAllProblems } from '../../data/problemsData';
+import AutomataBuilder from '../AutomataBuilder';
+import StringTester from '../StringTester';
+import AIHelper from '../AIHelper';
+import { useAuth } from '../../context/AuthContext';
+import apiService from '../../services/apiService';
 import './FASimulation.css';
 
 const FASimulation = () => {
   const { problemId } = useParams();
-  const navigate = useNavigate();
+  const router = useRouter();
   const location = useLocation();
   const { user } = useAuth();
   const problem = getProblemById(problemId);
@@ -244,7 +245,7 @@ const FASimulation = () => {
   const handleConfirmLogout = () => {
     logout();
     setLogoutDialogOpen(false);
-    navigate('/');
+    router.push('/');
   };
 
   const handleEditProfileClick = () => {
@@ -399,7 +400,7 @@ const FASimulation = () => {
       <div className="fa-simulation-page">
         <div className="error-container">
           <h2>Problem Not Found</h2>
-          <button onClick={() => navigate('/problems')}>← Back to Problems</button>
+          <button onClick={() => router.push('/problems')}>← Back to Problems</button>
         </div>
       </div>
     );
@@ -538,7 +539,7 @@ const FASimulation = () => {
                       className="dropdown-item"
                       onClick={() => {
                         setIsProfileOpen(false);
-                        navigate('/dashboard');
+                        router.push('/dashboard');
                       }}
                     >
                       <span className="dropdown-icon">
