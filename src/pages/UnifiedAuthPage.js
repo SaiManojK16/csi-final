@@ -29,11 +29,21 @@ const UnifiedAuthPage = () => {
 
     try {
       // Check if email exists in the system
-      const response = await fetch('http://localhost:5001/api/auth/check-email', {
+      const apiUrl = process.env.REACT_APP_API_URL || 
+        (process.env.NODE_ENV === 'development' ? 'http://localhost:5001' : '');
+      const baseUrl = apiUrl.endsWith('/api') ? apiUrl.replace('/api', '') : apiUrl;
+      const checkEmailUrl = baseUrl ? `${baseUrl}/api/auth/check-email` : '/api/auth/check-email';
+      
+      const response = await fetch(checkEmailUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email }),
+        signal: AbortSignal.timeout(60000) // 60 second timeout
       });
+
+      if (!response.ok) {
+        throw new Error('Server error');
+      }
 
       const data = await response.json();
 
@@ -45,7 +55,12 @@ const UnifiedAuthPage = () => {
         setStep('signup');
       }
     } catch (err) {
-      setError('Unable to connect to server. Please try again.');
+      if (err.name === 'AbortError' || err.name === 'TimeoutError') {
+        setError('Request timed out. The server may be starting up. Please wait a moment and try again.');
+      } else {
+        setError('Unable to connect to server. The service may be starting up. Please try again in a few seconds.');
+      }
+      console.error('Email check error:', err);
     } finally {
       setLoading(false);
     }
@@ -59,12 +74,16 @@ const UnifiedAuthPage = () => {
     try {
       const result = await login(email, password);
       if (result.success) {
-      navigate('/dashboard');
+        navigate('/dashboard');
       } else {
         setError(result.message || 'Invalid email or password');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid email or password');
+      if (err.message && err.message.includes('timeout')) {
+        setError('Request timed out. The server may be starting up. Please wait 30 seconds and try again.');
+      } else {
+        setError(err.message || 'Unable to connect to server. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -94,12 +113,16 @@ const UnifiedAuthPage = () => {
     try {
       const result = await signup(username, email, password);
       if (result.success) {
-      navigate('/dashboard');
+        navigate('/dashboard');
       } else {
         setError(result.message || 'Failed to create account');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to create account');
+      if (err.message && err.message.includes('timeout')) {
+        setError('Request timed out. The server may be starting up. Please wait 30 seconds and try again.');
+      } else {
+        setError(err.message || 'Unable to connect to server. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

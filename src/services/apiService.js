@@ -55,6 +55,12 @@ class APIService {
       headers: this.getHeaders(),
     };
 
+    // Add timeout for production (Render free tier can take 30s to wake up)
+    const timeout = process.env.NODE_ENV === 'production' ? 60000 : 30000; // 60s for production, 30s for dev
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    config.signal = controller.signal;
+
     console.log('🔵 API Request:', {
       url,
       method: config.method || 'GET',
@@ -64,7 +70,15 @@ class APIService {
 
     try {
       const response = await fetch(url, config);
+      clearTimeout(timeoutId);
       console.log('🟢 API Response Status:', response.status, response.statusText);
+      
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        throw new Error(`Invalid response format. Expected JSON, got: ${contentType}. Response: ${text.substring(0, 100)}`);
+      }
       
       const data = await response.json();
       console.log('📦 API Response Data:', data);
@@ -75,12 +89,19 @@ class APIService {
 
       return data;
     } catch (error) {
+      clearTimeout(timeoutId);
       console.error('🔴 API Error:', error);
       console.error('🔴 Error Details:', {
         message: error.message,
         endpoint,
         url,
       });
+      
+      // Provide user-friendly error messages
+      if (error.name === 'AbortError') {
+        throw new Error('Request timed out. The server may be starting up. Please try again in a few seconds.');
+      }
+      
       throw error;
     }
   }
