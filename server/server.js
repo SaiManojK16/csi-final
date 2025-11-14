@@ -75,6 +75,15 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Keep-alive endpoint (ping this to prevent Render spin-down)
+app.get('/api/ping', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    message: 'Service is alive'
+  });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
