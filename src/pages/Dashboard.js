@@ -22,10 +22,7 @@ const Dashboard = () => {
   // Graph states
   const [graphTab, setGraphTab] = useState('solved'); // 'solved' or 'submissions'
   const [graphPeriod, setGraphPeriod] = useState('D'); // 'D', 'W', 'M'
-  const [graphDate, setGraphDate] = useState(() => {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-  });
+  const [graphDate, setGraphDate] = useState('2025-11');
 
   // Expanded rows
   const [expandedRows, setExpandedRows] = useState(new Set());
@@ -359,30 +356,6 @@ const Dashboard = () => {
       yAxisLabels.push(i * step);
     }
   }
-
-  // Generate date options dynamically
-  const generateDateOptions = () => {
-    const options = [];
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth() + 1;
-    
-    // Generate options for current year (last 3 months)
-    for (let i = 0; i < 3; i++) {
-      const month = currentMonth - i;
-      if (month > 0) {
-        options.push(`${currentYear}-${String(month).padStart(2, '0')}`);
-      } else {
-        const prevYear = currentYear - 1;
-        const prevMonth = 12 + month;
-        options.push(`${prevYear}-${String(prevMonth).padStart(2, '0')}`);
-      }
-    }
-    
-    return options.reverse();
-  };
-
-  const dateOptions = generateDateOptions();
 
   const practiceHistory = getPracticeHistory();
 
@@ -964,14 +937,14 @@ const Dashboard = () => {
                   value={graphDate}
                   onChange={(e) => setGraphDate(e.target.value)}
                 >
-                  {dateOptions.map(date => (
-                    <option key={date} value={date}>{date}</option>
-                  ))}
+                  <option value="2025-11">2025-11</option>
+                  <option value="2025-10">2025-10</option>
+                  <option value="2025-09">2025-09</option>
                 </select>
               </div>
             </div>
             <div className="graph-content">
-              {graphData.length > 0 ? (
+              {maxValue > 0 ? (
                 <>
                   <div className="graph-bars-container">
                     {graphData.map((point, index) => {
@@ -980,7 +953,7 @@ const Dashboard = () => {
                         <div key={index} className="graph-bar-wrapper">
                           <div 
                             className={`graph-bar ${graphTab === 'solved' ? 'solved-bar' : 'submissions-bar'}`}
-                            style={{ height: `${Math.max(height, 0)}%` }}
+                            style={{ height: `${height}%` }}
                             title={`${point.label}: ${point.value}`}
                           >
                             {point.value > 0 && (
@@ -1009,7 +982,7 @@ const Dashboard = () => {
                 </>
               ) : (
                 <div className="no-data-message">
-                  <p>No data available</p>
+                  <p>No data</p>
                 </div>
               )}
             </div>

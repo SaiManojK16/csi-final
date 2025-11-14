@@ -297,134 +297,195 @@ const ProblemSelection = () => {
 
         {/* Main Content */}
         <div className="problems-main">
-          <div className="top-section">
-            <div className="topic-filters">
-              <div className="topic-row">
-                <span 
-                  className={`topic-item ${selectedTopic === 'all' ? 'active' : ''}`}
-                  onClick={() => setSelectedTopic('all')}
-                >
-                  All {topicCounts.all}
-                </span>
-                <span 
-                  className={`topic-item ${selectedTopic === 'dfa' ? 'active' : ''}`}
-                  onClick={() => setSelectedTopic('dfa')}
-                >
-                  DFA {topicCounts.dfa}
-                </span>
-                <span 
-                  className={`topic-item ${selectedTopic === 'nfa' ? 'active' : ''}`}
-                  onClick={() => setSelectedTopic('nfa')}
-                >
-                  NFA {topicCounts.nfa}
-                </span>
-                <span 
-                  className={`topic-item ${selectedTopic === 'regex' ? 'active' : ''}`}
-                  onClick={() => setSelectedTopic('regex')}
-                >
-                  Regular Expression {topicCounts.regex}
-                </span>
-                <span 
-                  className={`topic-item ${selectedTopic === 'quiz' ? 'active' : ''}`}
-                  onClick={() => setSelectedTopic('quiz')}
-                >
-                  Quizzes {topicCounts.quiz}
-                </span>
-              </div>
-
-              <div className="topic-buttons">
-                <button 
-                  className={`topic-btn ${selectedType === 'all' ? 'active' : ''}`} 
-                  onClick={() => setSelectedType('all')}
-                >
-                  <span>All Types</span>
-                </button>
-                <button 
-                  className={`topic-btn ${selectedType === 'fa' ? 'active' : ''}`} 
-                  onClick={() => setSelectedType('fa')}
-                >
-                  <span>FA Simulation</span>
-                </button>
-                <button 
-                  className={`topic-btn ${selectedType === 'quiz' ? 'active' : ''}`} 
-                  onClick={() => setSelectedType('quiz')}
-                >
-                  <span>MCQ Quizzes</span>
-                </button>
-                <button 
-                  className={`topic-btn ${selectedDifficulty === 'Easy' ? 'active' : ''}`} 
-                  onClick={() => setSelectedDifficulty(selectedDifficulty === 'Easy' ? 'all' : 'Easy')}
-                >
-                  <span>Easy ({difficultyCounts.easy})</span>
-                </button>
-                <button 
-                  className={`topic-btn ${selectedDifficulty === 'Medium' ? 'active' : ''}`} 
-                  onClick={() => setSelectedDifficulty(selectedDifficulty === 'Medium' ? 'all' : 'Medium')}
-                >
-                  <span>Medium ({difficultyCounts.medium})</span>
-                </button>
-                <button 
-                  className={`topic-btn ${selectedDifficulty === 'Hard' ? 'active' : ''}`} 
-                  onClick={() => setSelectedDifficulty(selectedDifficulty === 'Hard' ? 'all' : 'Hard')}
-                >
-                  <span>Hard ({difficultyCounts.hard})</span>
-                </button>
-              </div>
+          {/* Topic Filters */}
+          <div className="topic-filters">
+            <div className="topic-row">
+              <span 
+                className={`topic-item ${selectedTopic === 'all' ? 'active' : ''}`}
+                onClick={() => setSelectedTopic('all')}
+              >
+                All {topicCounts.all}
+              </span>
+              <span 
+                className={`topic-item ${selectedTopic === 'dfa' ? 'active' : ''}`}
+                onClick={() => setSelectedTopic('dfa')}
+              >
+                DFA {topicCounts.dfa}
+              </span>
+              <span 
+                className={`topic-item ${selectedTopic === 'nfa' ? 'active' : ''}`}
+                onClick={() => setSelectedTopic('nfa')}
+              >
+                NFA {topicCounts.nfa}
+              </span>
+              <span 
+                className={`topic-item ${selectedTopic === 'regex' ? 'active' : ''}`}
+                onClick={() => setSelectedTopic('regex')}
+              >
+                Regular Expression {topicCounts.regex}
+              </span>
+              <span 
+                className={`topic-item ${selectedTopic === 'quiz' ? 'active' : ''}`}
+                onClick={() => setSelectedTopic('quiz')}
+              >
+                Quizzes {topicCounts.quiz}
+              </span>
             </div>
+            <div className="topic-buttons">
+              <button 
+                className={`topic-btn ${selectedType === 'all' ? 'active' : ''}`} 
+                onClick={() => setSelectedType('all')}
+              >
+                <span>All Types</span>
+              </button>
+              <button 
+                className={`topic-btn ${selectedType === 'fa' ? 'active' : ''}`} 
+                onClick={() => setSelectedType('fa')}
+              >
+                <span>FA Simulation</span>
+              </button>
+              <button 
+                className={`topic-btn ${selectedType === 'quiz' ? 'active' : ''}`} 
+                onClick={() => setSelectedType('quiz')}
+              >
+                <span>MCQ Quizzes</span>
+              </button>
+              <button 
+                className={`topic-btn ${selectedDifficulty === 'Easy' ? 'active' : ''}`} 
+                onClick={() => setSelectedDifficulty(selectedDifficulty === 'Easy' ? 'all' : 'Easy')}
+              >
+                <span>Easy ({difficultyCounts.easy})</span>
+              </button>
+              <button 
+                className={`topic-btn ${selectedDifficulty === 'Medium' ? 'active' : ''}`} 
+                onClick={() => setSelectedDifficulty(selectedDifficulty === 'Medium' ? 'all' : 'Medium')}
+              >
+                <span>Medium ({difficultyCounts.medium})</span>
+              </button>
+              <button 
+                className={`topic-btn ${selectedDifficulty === 'Hard' ? 'active' : ''}`} 
+                onClick={() => setSelectedDifficulty(selectedDifficulty === 'Hard' ? 'all' : 'Hard')}
+              >
+                <span>Hard ({difficultyCounts.hard})</span>
+              </button>
+            </div>
+          </div>
 
-            <div className="list-controls">
-              <div className="search-box">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="search-icon">
-                  <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-                  <path d="M11 11l3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Search questions"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="search-input"
-                />
-              </div>
-              <div className="control-actions">
-                <div className="sort-filter-group">
-                  <div className="sort-container">
-                    {/* Sort dropdown removed per request */}
-                  </div>
+          {/* Problem List Controls */}
+          <div className="list-controls">
+            <div className="search-box">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="search-icon">
+                <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5" fill="none"/>
+                <path d="M11 11l3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              <input
+                type="text"
+                placeholder="Search questions"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-input"
+              />
+            </div>
+            <div className="control-actions">
+              <div className="sort-filter-group">
+                <div className="sort-container">
                   <button 
-                    className="control-btn filter-btn" 
-                    title="Filter"
-                    onClick={() => setIsFilterDialogOpen(!isFilterDialogOpen)}
+                    className="control-btn sort-btn" 
+                    title="Sort"
+                    onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
                   >
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path d="M2 4h12M5 8h6M7 12h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                      <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
                     </svg>
                   </button>
+                  {isSortDropdownOpen && (
+                    <div className="sort-dropdown" onClick={(e) => e.stopPropagation()}>
+                      <button 
+                        className={`sort-option ${sortBy === 'custom' ? 'active' : ''}`}
+                        onClick={() => { setSortBy('custom'); setIsSortDropdownOpen(false); }}
+                      >
+                        Custom {sortBy === 'custom' && (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: '4px' }}>
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                        )}
+                      </button>
+                      <button 
+                        className={`sort-option ${sortBy === 'difficulty' ? 'active' : ''}`}
+                        onClick={() => { setSortBy('difficulty'); setIsSortDropdownOpen(false); }}
+                      >
+                        Difficulty {sortBy === 'difficulty' && (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: '4px' }}>
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                        )}
+                      </button>
+                      <button 
+                        className={`sort-option ${sortBy === 'acceptance' ? 'active' : ''}`}
+                        onClick={() => { setSortBy('acceptance'); setIsSortDropdownOpen(false); }}
+                      >
+                        Acceptance {sortBy === 'acceptance' && (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: '4px' }}>
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                        )}
+                      </button>
+                      <button 
+                        className={`sort-option ${sortBy === 'id' ? 'active' : ''}`}
+                        onClick={() => { setSortBy('id'); setIsSortDropdownOpen(false); }}
+                      >
+                        Question ID {sortBy === 'id' && (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: '4px' }}>
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                        )}
+                      </button>
+                      <button 
+                        className={`sort-option ${sortBy === 'title' ? 'active' : ''}`}
+                        onClick={() => { setSortBy('title'); setIsSortDropdownOpen(false); }}
+                      >
+                        Title {sortBy === 'title' && (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ display: 'inline-block', verticalAlign: 'middle', marginLeft: '4px' }}>
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <div className="progress-info">
-                  <span>{getSolvedCount()}/{filteredItems.length} Solved</span>
-                  <button 
-                    className="refresh-btn" 
-                    onClick={() => {
-                      setStatusFilter('all');
-                      setDifficultyFilter('all');
-                      setTypeFilter('all');
-                      setSelectedType('all');
-                      setSelectedDifficulty('all');
-                      setSelectedTopic('all');
-                      setSearchQuery('');
-                      setSortBy('custom');
-                    }}
-                    title="Reset all filters"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-                      <path d="M21 3v5h-5"/>
-                      <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-                      <path d="M3 21v-5h5"/>
-                    </svg>
-                  </button>
-                </div>
+                <button 
+                  className="control-btn filter-btn" 
+                  title="Filter"
+                  onClick={() => setIsFilterDialogOpen(!isFilterDialogOpen)}
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              </div>
+              <div className="progress-info">
+                <span>{getSolvedCount()}/{filteredItems.length} Solved</span>
+                <button 
+                  className="refresh-btn" 
+                  onClick={() => {
+                    setStatusFilter('all');
+                    setDifficultyFilter('all');
+                    setTypeFilter('all');
+                    setSelectedType('all');
+                    setSelectedDifficulty('all');
+                    setSelectedTopic('all');
+                    setSearchQuery('');
+                    setSortBy('custom');
+                  }}
+                  title="Reset all filters"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                    <path d="M21 3v5h-5"/>
+                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                    <path d="M3 21v-5h5"/>
+                  </svg>
+                </button>
               </div>
             </div>
           </div>

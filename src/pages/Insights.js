@@ -332,12 +332,6 @@ const Insights = () => {
                 <div className="section-header-simple">
                   <h2>Your Performance Overview</h2>
                 </div>
-                
-                {insights.overallAnalysis && (
-                  <div className="overall-analysis">
-                    <p>{insights.overallAnalysis}</p>
-                  </div>
-                )}
 
                 <div className="insights-grid">
                   {insights.strengths && insights.strengths.length > 0 && (
