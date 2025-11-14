@@ -1,8 +1,23 @@
 // API Service for backend communication
 
 // Use full backend URL in development to bypass proxy issues
-const API_BASE_URL = process.env.REACT_APP_API_URL || 
-  (process.env.NODE_ENV === 'development' ? 'http://localhost:5001/api' : '/api');
+// If REACT_APP_API_URL is set, use it (should include /api)
+// Otherwise, use localhost in dev or /api in production
+let API_BASE_URL = process.env.REACT_APP_API_URL;
+
+if (!API_BASE_URL) {
+  // Fallback: use localhost in dev, or /api in production
+  API_BASE_URL = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:5001/api' 
+    : '/api';
+} else {
+  // If REACT_APP_API_URL is set, ensure it ends with /api
+  // Remove trailing slash if present, then add /api
+  API_BASE_URL = API_BASE_URL.replace(/\/$/, '');
+  if (!API_BASE_URL.endsWith('/api')) {
+    API_BASE_URL = `${API_BASE_URL}/api`;
+  }
+}
 
 class APIService {
   constructor() {
