@@ -41,9 +41,10 @@ Your `.env` file should contain:
 
 ```env
 # Required for Backend
+# For local MongoDB:
 MONGODB_URI=mongodb://localhost:27017/acceptly
-# Or for MongoDB Atlas:
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/acceptly
+# Or for MongoDB Atlas (replace with your actual connection string):
+# MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/<database-name>?retryWrites=true&w=majority
 
 JWT_SECRET=your-super-secret-jwt-key-change-this
 
