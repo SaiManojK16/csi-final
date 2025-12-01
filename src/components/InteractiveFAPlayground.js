@@ -26,7 +26,7 @@ const InteractiveFAPlayground = () => {
       { from: 'q0', to: 'q1', symbol: '0', type: 'normal' },
       { from: 'q0', to: 'q0', symbol: '1', type: 'self' },
       { from: 'q1', to: 'q1', symbol: '0', type: 'self' },
-      { from: 'q1', to: 'q2', symbol: '1', type: 'normal' },
+      { from: 'q1', to: 'q2', symbol: '1', type: 'normal' }, // Transition from q1 to q2 with symbol '1'
       { from: 'q2', to: 'q1', symbol: '0', type: 'normal' },
       { from: 'q2', to: 'q0', symbol: '1', type: 'normal' }
     ],
