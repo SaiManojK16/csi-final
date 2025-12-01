@@ -1,4 +1,5 @@
 // API Service for backend communication
+import logger from '../utils/logger';
 
 // Use full backend URL in development to bypass proxy issues
 // If REACT_APP_API_URL is set, use it (should include /api)
@@ -55,53 +56,31 @@ class APIService {
       headers: this.getHeaders(),
     };
 
-    // Add timeout for production (Render free tier can take 30s to wake up)
-    const timeout = process.env.NODE_ENV === 'production' ? 60000 : 30000; // 60s for production, 30s for dev
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
-    config.signal = controller.signal;
-
-    console.log('🔵 API Request:', {
-      url,
-      method: config.method || 'GET',
-      endpoint,
-      API_BASE_URL,
-    });
+    const method = config.method || 'GET';
+    logger.api(method, endpoint, 'pending');
 
     try {
       const response = await fetch(url, config);
-      clearTimeout(timeoutId);
-      console.log('🟢 API Response Status:', response.status, response.statusText);
-      
-      // Check if response is JSON
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const text = await response.text();
-        throw new Error(`Invalid response format. Expected JSON, got: ${contentType}. Response: ${text.substring(0, 100)}`);
-      }
-      
       const data = await response.json();
-      console.log('📦 API Response Data:', data);
+
+      logger.api(method, endpoint, response.status);
 
       if (!response.ok) {
+        logger.error('API request failed:', {
+          endpoint,
+          status: response.status,
+          message: data.message
+        });
         throw new Error(data.message || 'API request failed');
       }
 
       return data;
     } catch (error) {
-      clearTimeout(timeoutId);
-      console.error('🔴 API Error:', error);
-      console.error('🔴 Error Details:', {
-        message: error.message,
+      logger.error('API Error:', {
         endpoint,
-        url,
+        message: error.message,
+        url
       });
-      
-      // Provide user-friendly error messages
-      if (error.name === 'AbortError') {
-        throw new Error('Request timed out. The server may be starting up. Please try again in a few seconds.');
-      }
-      
       throw error;
     }
   }

@@ -67,19 +67,12 @@ const StringTester = ({ onTestString, states, startState, transitions, onTestRes
     
     // Quick validation check
     const startStateObj = states.get(startState);
-    console.log('\n🔍 FA ANALYSIS:');
-    console.log('Start state:', startState, 'Is accepting:', startStateObj?.isAccepting);
-    console.log('All states:', Array.from(states.entries()));
-    console.log('All transitions:', transitions);
     
-    // Analyze FA structure for "only 0s" language
-    console.log('\n📊 STRUCTURE ANALYSIS:');
+    // Analyze FA structure
     const acceptingStates = Array.from(states.values()).filter(s => s.isAccepting);
-    console.log('Accepting states:', acceptingStates.map(s => s.id));
     
     // Check transitions from start state
     const transitionsFromStart = transitions.filter(t => t.from === startState);
-    console.log('Transitions from start state:', transitionsFromStart);
     
     // Helper to check if symbol is in transition symbols (same logic as simulation)
     const symbolInTransition = (transitionSymbols, symbol) => {
@@ -90,31 +83,6 @@ const StringTester = ({ onTestString, states, startState, transitions, onTestRes
     
     const hasTransitionOn0 = transitionsFromStart.some(t => symbolInTransition(t.symbols, '0'));
     const hasTransitionOn1 = transitionsFromStart.some(t => symbolInTransition(t.symbols, '1'));
-    console.log('Start state has transition on 0:', hasTransitionOn0);
-    console.log('Start state has transition on 1:', hasTransitionOn1);
-    
-    // Warning for potential issues
-    if (!startStateObj?.isAccepting) {
-      console.log('⚠️ WARNING: Start state is not accepting - empty string will be rejected');
-    }
-    if (hasTransitionOn1) {
-      const transitionOn1 = transitionsFromStart.find(t => symbolInTransition(t.symbols, '1'));
-      const targetState = states.get(transitionOn1.to);
-      if (targetState?.isAccepting) {
-        console.log('🚨 CRITICAL: Transition on "1" leads to accepting state - this will accept strings with 1s!');
-        if (transitionOn1.to === startState) {
-          console.log('🚨 DETECTED: Self-loop on "1" in accepting start state - this accepts {1}* instead of {0}*');
-        }
-      }
-    }
-    
-    // Check for common mistake: FA that accepts only 1s instead of only 0s  
-    if (hasTransitionOn1 && !hasTransitionOn0 && startStateObj?.isAccepting) {
-      console.log('🚨 MAJOR ERROR: Your FA accepts strings with only 1s, but problem asks for only 0s!');
-      console.log('   Current FA accepts: {ε, 1, 11, 111, ...} = {1}*');
-      console.log('   Required FA should accept: {ε, 0, 00, 000, ...} = {0}*');
-      console.log('   FIX: Change transition from "1" to "0"');
-    }
 
     const results = [];
     
@@ -246,14 +214,7 @@ const StringTester = ({ onTestString, states, startState, transitions, onTestRes
       
       const result = onTestString(testCase.input);
       
-      // Enhanced debugging
-      console.log(`\n=== TEST ${i + 1}: "${testCase.input}" ===`);
-      console.log('Expected:', testCase.expected ? 'ACCEPT' : 'REJECT');
-      console.log('Actual:', result.accepted ? 'ACCEPT' : 'REJECT');
-      console.log('Path:', result.path);
-      console.log('Final State:', result.path ? result.path[result.path.length - 1] : 'none');
-      console.log('Error:', result.error);
-      console.log('Passed:', result.accepted === testCase.expected);
+      // Test execution complete
       
       const testResult = {
         ...testCase,

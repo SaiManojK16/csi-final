@@ -39,7 +39,13 @@ function AppRoutes() {
 const KeyedFASimulation = () => {
   const location = useLocation();
   const { problemId } = useParams();
-  return <FASimulation key={`fa-${problemId}-${location.key || location.pathname}`} />;
+  // Use problemId, timestamp, navCounter, and location.key to ensure unique key
+  const timestamp = location.state?.timestamp || Date.now();
+  const navCounter = location.state?.navCounter || 0;
+  const locationKey = location.key || location.pathname;
+  // Create a truly unique key that changes on every navigation
+  const navigationKey = `${problemId}-${timestamp}-${navCounter}-${locationKey}`;
+  return <FASimulation key={`fa-${navigationKey}`} />;
 };
 
 const KeyedQuizPage = () => {

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authMiddleware } = require('./auth');
+const logger = require('../utils/logger');
 
 // Import problem data (you can move this to database later)
 const { faProblems, mcqQuizzes } = require('../../src/data/problemsData');
@@ -38,7 +39,7 @@ router.get('/', authMiddleware, async (req, res) => {
       count: allProblems.length,
     });
   } catch (error) {
-    console.error('Get problems error:', error);
+    logger.error('Get problems error:', error.message);
     res.status(500).json({ 
       success: false, 
       message: 'Error fetching problems' 
@@ -66,7 +67,7 @@ router.get('/:id', authMiddleware, async (req, res) => {
       problem,
     });
   } catch (error) {
-    console.error('Get problem error:', error);
+    logger.error('Get problem error:', error.message);
     res.status(500).json({ 
       success: false, 
       message: 'Error fetching problem' 

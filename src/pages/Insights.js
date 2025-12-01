@@ -332,7 +332,7 @@ const Insights = () => {
                 <div className="section-header-simple">
                   <h2>Your Performance Overview</h2>
                 </div>
-
+                
                 <div className="insights-grid">
                   {insights.strengths && insights.strengths.length > 0 && (
                     <div className="insight-card strengths">

@@ -11,10 +11,10 @@ const UnifiedAuthPage = () => {
   const [step, setStep] = useState('email'); // 'email', 'signin', 'signup'
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   
   const { login, signup } = useAuth();
   const navigate = useNavigate();
+
 
   const handleEmailContinue = async (e) => {
     e.preventDefault();
@@ -29,21 +29,11 @@ const UnifiedAuthPage = () => {
 
     try {
       // Check if email exists in the system
-      const apiUrl = process.env.REACT_APP_API_URL || 
-        (process.env.NODE_ENV === 'development' ? 'http://localhost:5001' : '');
-      const baseUrl = apiUrl.endsWith('/api') ? apiUrl.replace('/api', '') : apiUrl;
-      const checkEmailUrl = baseUrl ? `${baseUrl}/api/auth/check-email` : '/api/auth/check-email';
-      
-      const response = await fetch(checkEmailUrl, {
+      const response = await fetch('http://localhost:5001/api/auth/check-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-        signal: AbortSignal.timeout(60000) // 60 second timeout
+        body: JSON.stringify({ email })
       });
-
-      if (!response.ok) {
-        throw new Error('Server error');
-      }
 
       const data = await response.json();
 
@@ -55,12 +45,7 @@ const UnifiedAuthPage = () => {
         setStep('signup');
       }
     } catch (err) {
-      if (err.name === 'AbortError' || err.name === 'TimeoutError') {
-        setError('Request timed out. The server may be starting up. Please wait a moment and try again.');
-      } else {
-        setError('Unable to connect to server. The service may be starting up. Please try again in a few seconds.');
-      }
-      console.error('Email check error:', err);
+      setError('Unable to connect to server. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -74,16 +59,12 @@ const UnifiedAuthPage = () => {
     try {
       const result = await login(email, password);
       if (result.success) {
-        navigate('/dashboard');
+      navigate('/dashboard');
       } else {
         setError(result.message || 'Invalid email or password');
       }
     } catch (err) {
-      if (err.message && err.message.includes('timeout')) {
-        setError('Request timed out. The server may be starting up. Please wait 30 seconds and try again.');
-      } else {
-        setError(err.message || 'Unable to connect to server. Please try again.');
-      }
+      setError(err.response?.data?.message || 'Invalid email or password');
     } finally {
       setLoading(false);
     }
@@ -113,16 +94,12 @@ const UnifiedAuthPage = () => {
     try {
       const result = await signup(username, email, password);
       if (result.success) {
-        navigate('/dashboard');
+      navigate('/dashboard');
       } else {
         setError(result.message || 'Failed to create account');
       }
     } catch (err) {
-      if (err.message && err.message.includes('timeout')) {
-        setError('Request timed out. The server may be starting up. Please wait 30 seconds and try again.');
-      } else {
-        setError(err.message || 'Unable to connect to server. Please try again.');
-      }
+      setError(err.response?.data?.message || 'Failed to create account');
     } finally {
       setLoading(false);
     }
@@ -149,12 +126,6 @@ const UnifiedAuthPage = () => {
       </div>
 
       <div className="unified-auth-container">
-        <div className="auth-brand">
-          <span className="brand-icon">🔷</span>
-          <h1>Acceptly</h1>
-          <p className="brand-tagline">From Mistakes to Mastery</p>
-        </div>
-
         <div className="unified-auth-card">
           <div className="auth-header">
             {step === 'email' && (
@@ -230,53 +201,31 @@ const UnifiedAuthPage = () => {
             <form onSubmit={handleSignIn} className="auth-form" noValidate>
               <div className="form-group">
                 <label htmlFor="signin-email">Email Address</label>
-                <div className="input-with-action">
-                  <input
-                    id="signin-email"
-                    type="email"
-                    value={email}
-                    disabled
-                    className="input-locked"
-                    aria-label="Email address (locked)"
-                  />
-                  <button 
-                    type="button" 
-                    onClick={handleBack}
-                    className="btn-change"
-                    aria-label="Change email address"
-                  >
-                    Change
-                  </button>
-                </div>
+                <input
+                  id="signin-email"
+                  type="email"
+                  value={email}
+                  disabled
+                  className="input-locked"
+                  aria-label="Email address (locked)"
+                />
               </div>
 
               <div className="form-group">
                 <label htmlFor="signin-password">
                   Password <span className="required-mark" aria-label="required">*</span>
                 </label>
-                <div className="input-with-toggle">
-                  <input
-                    id="signin-password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={loading}
-                    autoFocus
-                    required
-                    aria-required="true"
-                    aria-invalid={error ? 'true' : 'false'}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="btn-toggle-password"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    tabIndex={0}
-                  >
-                    <span aria-hidden="true">{showPassword ? '👁️' : '👁️‍🗨️'}</span>
-                  </button>
-                </div>
+                <input
+                  id="signin-password"
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
+                  required
+                  aria-required="true"
+                  aria-invalid={error ? 'true' : 'false'}
+                />
               </div>
 
               <button
@@ -308,24 +257,14 @@ const UnifiedAuthPage = () => {
             <form onSubmit={handleSignUp} className="auth-form" noValidate>
               <div className="form-group">
                 <label htmlFor="signup-email">Email Address</label>
-                <div className="input-with-action">
-                  <input
-                    id="signup-email"
-                    type="email"
-                    value={email}
-                    disabled
-                    className="input-locked"
-                    aria-label="Email address (locked)"
-                  />
-                  <button 
-                    type="button" 
-                    onClick={handleBack}
-                    className="btn-change"
-                    aria-label="Change email address"
-                  >
-                    Change
-                  </button>
-                </div>
+                <input
+                  id="signup-email"
+                  type="email"
+                  value={email}
+                  disabled
+                  className="input-locked"
+                  aria-label="Email address (locked)"
+                />
               </div>
 
               <div className="form-group">
@@ -339,7 +278,6 @@ const UnifiedAuthPage = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   disabled={loading}
-                  autoFocus
                   required
                   aria-required="true"
                   aria-invalid={error && !username.trim() ? 'true' : 'false'}
@@ -350,30 +288,19 @@ const UnifiedAuthPage = () => {
                 <label htmlFor="signup-password">
                   Password <span className="required-mark" aria-label="required">*</span>
                 </label>
-                <div className="input-with-toggle">
-                  <input
-                    id="signup-password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Create a strong password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={loading}
-                    required
-                    minLength={6}
-                    aria-required="true"
-                    aria-invalid={error && password.length < 6 ? 'true' : 'false'}
-                    aria-describedby="password-hint"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="btn-toggle-password"
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    tabIndex={0}
-                  >
-                    <span aria-hidden="true">{showPassword ? '👁️' : '👁️‍🗨️'}</span>
-                  </button>
-                </div>
+                <input
+                  id="signup-password"
+                  type="password"
+                  placeholder="Create a strong password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
+                  required
+                  minLength={6}
+                  aria-required="true"
+                  aria-invalid={error && password.length < 6 ? 'true' : 'false'}
+                  aria-describedby="password-hint"
+                />
                 <p id="password-hint" className="input-hint">At least 6 characters</p>
               </div>
 
@@ -383,7 +310,7 @@ const UnifiedAuthPage = () => {
                 </label>
                 <input
                   id="signup-confirm"
-                  type={showPassword ? 'text' : 'password'}
+                  type="password"
                   placeholder="Confirm your password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}

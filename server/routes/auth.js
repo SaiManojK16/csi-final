@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const logger = require('../utils/logger');
 
 // Generate JWT token
 const generateToken = (userId) => {
@@ -51,7 +52,7 @@ router.post('/check-email', async (req, res) => {
       exists: !!user
     });
   } catch (error) {
-    console.error('Check email error:', error);
+    logger.error('Check email error:', error.message);
     res.status(500).json({ 
       success: false, 
       message: 'Error checking email' 
@@ -101,11 +102,11 @@ router.post('/signup', async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Signup error:', error);
+    logger.error('Signup error:', error.message);
     res.status(500).json({ 
       success: false, 
       message: 'Error creating user',
-      error: error.message 
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 });
@@ -161,11 +162,11 @@ router.post('/login', async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error('Login error:', error.message);
     res.status(500).json({ 
       success: false, 
       message: 'Error logging in',
-      error: error.message 
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 });
@@ -205,7 +206,7 @@ router.post('/reset-password', async (req, res) => {
       message: 'Password reset link sent to ' + email,
     });
   } catch (error) {
-    console.error('Reset password error:', error);
+    logger.error('Reset password error:', error.message);
     res.status(500).json({ 
       success: false, 
       message: 'Error processing request' 

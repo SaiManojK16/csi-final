@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const logger = require('./utils/logger');
+const { validateEnvironment } = require('./utils/validateEnv');
 
 // Load environment variables
 // In production (Render), use environment variables from Render dashboard
@@ -9,6 +11,9 @@ const path = require('path');
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config({ path: path.join(__dirname, '.env') });
 }
+
+// Validate environment variables before starting
+validateEnvironment();
 
 const app = express();
 
@@ -27,32 +32,31 @@ app.use(cors({
     if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
       callback(null, true);
     } else {
-      callback(null, true); // Allow all origins for now - restrict in production if needed
+      // In production, be more restrictive
+      if (process.env.NODE_ENV === 'production') {
+        logger.warn(`Blocked request from unauthorized origin: ${origin}`);
+        return callback(new Error('Not allowed by CORS'));
+      }
+      callback(null, true);
     }
   },
   credentials: true
 }));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // Add body size limit
 
 // MongoDB Connection
 const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI) {
-  console.error('❌ MONGODB_URI environment variable is not set!');
-  console.error('Please set MONGODB_URI in your environment variables.');
-  process.exit(1);
-}
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
 .then(() => {
-  console.log('✅ Connected to MongoDB successfully!');
-  console.log('📊 Database: acceptly');
+  logger.success('Connected to MongoDB successfully!');
+  logger.info('Database: acceptly');
 })
 .catch((error) => {
-  console.error('❌ MongoDB connection error:', error);
+  logger.error('MongoDB connection error:', error.message);
   process.exit(1);
 });
 
@@ -75,21 +79,19 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Keep-alive endpoint (ping this to prevent Render spin-down)
-app.get('/api/ping', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    timestamp: new Date().toISOString(),
-    message: 'Service is alive'
-  });
-});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ 
+  logger.error('Unhandled error:', {
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    path: req.path,
+    method: req.method
+  });
+  
+  res.status(err.status || 500).json({ 
     success: false, 
-    message: 'Something went wrong!',
+    message: err.message || 'Something went wrong!',
     error: process.env.NODE_ENV === 'development' ? err.message : undefined
   });
 });
@@ -97,8 +99,9 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📍 API available at http://localhost:${PORT}/api`);
-  console.log(`🏥 Health check: http://localhost:${PORT}/api/health`);
+  logger.success(`Server running on port ${PORT}`);
+  logger.info(`API available at http://localhost:${PORT}/api`);
+  logger.info(`Health check: http://localhost:${PORT}/api/health`);
+  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { authMiddleware } = require('./auth');
 const User = require('../models/User');
+const logger = require('../utils/logger');
 
 // GET /api/progress - Get user progress
 router.get('/', authMiddleware, async (req, res) => {
@@ -13,7 +14,7 @@ router.get('/', authMiddleware, async (req, res) => {
       progress: user.progress,
     });
   } catch (error) {
-    console.error('Get progress error:', error);
+    logger.error('Get progress error:', error.message);
     res.status(500).json({ 
       success: false, 
       message: 'Error fetching progress' 
@@ -74,7 +75,7 @@ router.post('/fa/:problemId', authMiddleware, async (req, res) => {
       progress: user.progress,
     });
   } catch (error) {
-    console.error('Update FA progress error:', error);
+    logger.error('Update FA progress error:', error.message);
     res.status(500).json({ 
       success: false, 
       message: 'Error updating progress' 
@@ -136,7 +137,7 @@ router.post('/quiz/:quizId', authMiddleware, async (req, res) => {
       progress: user.progress,
     });
   } catch (error) {
-    console.error('Update quiz progress error:', error);
+    logger.error('Update quiz progress error:', error.message);
     res.status(500).json({ 
       success: false, 
       message: 'Error updating quiz progress' 

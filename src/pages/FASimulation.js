@@ -24,9 +24,16 @@ const FASimulation = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
-  const problem = getProblemById(problemId);
-  const allProblems = getAllProblems();
-  const currentProblemIndex = allProblems.findIndex(p => p.id === problemId);
+  
+  // Get all problems once - this is stable data
+  const allProblemsRef = useRef(getAllProblems());
+  const allProblems = allProblemsRef.current;
+  
+  // Use state to ensure problem updates when problemId changes
+  const [problem, setProblem] = React.useState(() => getProblemById(problemId));
+  const [currentProblemIndex, setCurrentProblemIndex] = React.useState(() => 
+    allProblems.findIndex(p => p.id === problemId)
+  );
   
   const [showTestPanel, setShowTestPanel] = useState(true); // Always show
   const [testPanelHeight, setTestPanelHeight] = useState(300);
@@ -53,31 +60,48 @@ const FASimulation = () => {
   const [hasSubmitted, setHasSubmitted] = useState(false); // Track if user has submitted
   const [activeTab, setActiveTab] = useState('testcase'); // Track active tab in test panel
   const tourRef = useRef(null); // Ref to access tutorial
+  const navigationCounterRef = useRef(0); // Counter to force remounts
   
-  // Reset state when problemId or location changes
+  // Update problem and index when problemId changes
   useEffect(() => {
     if (!problemId) return;
     
-    console.log('Problem changed to:', problemId, 'Location:', location.pathname, 'Key:', location.key);
+    const newProblem = getProblemById(problemId);
+    const newIndex = allProblems.findIndex(p => p.id === problemId);
     
-    // Reset all problem-specific state when navigating to a new problem
-    setShowTestPanel(true); // Always show test panel
-    setTestResults([]);
-    setTestSummary(null);
-    setTestStringFn(null);
-    testStringFnRef.current = null;
-    setBuilderStates({ states: new Map(), transitions: [], startState: null });
-    setSimulationState(null);
-    setIsSubmitting(false);
-    setSubmitMessage(null);
-    setIsAIHelperOpen(false);
-    setIsTestPanelMinimized(false); // Start expanded to show test cases
-    setHasSubmitted(false); // Reset submission state
-    setActiveTab('testcase'); // Reset to testcase tab
+    // Always update if problemId changed, even if problem object is the same
+    const problemChanged = !problem || problem.id !== problemId;
+    const indexChanged = newIndex >= 0 && newIndex !== currentProblemIndex;
     
-    // Force scroll to top when problem changes
-    window.scrollTo(0, 0);
-  }, [problemId, location.pathname, location.key, location.state]);
+    if (problemChanged || indexChanged) {
+      if (newProblem) {
+        setProblem(newProblem);
+      }
+      if (newIndex >= 0) {
+        setCurrentProblemIndex(newIndex);
+      }
+      
+      // Always reset state when navigating to a new problem
+      if (problemChanged) {
+        setShowTestPanel(true); // Always show test panel
+        setTestResults([]);
+        setTestSummary(null);
+        setTestStringFn(null);
+        testStringFnRef.current = null;
+        setBuilderStates({ states: new Map(), transitions: [], startState: null });
+        setSimulationState(null);
+        setIsSubmitting(false);
+        setSubmitMessage(null);
+        setIsAIHelperOpen(false);
+        setIsTestPanelMinimized(false); // Start expanded to show test cases
+        setHasSubmitted(false); // Reset submission state
+        setActiveTab('testcase'); // Reset to testcase tab
+        
+        // Force scroll to top when problem changes
+        window.scrollTo(0, 0);
+      }
+    }
+  }, [problemId, location.pathname, location.key, location.state?.timestamp, location.state?.navType]);
 
   // Update ref when function changes
   useEffect(() => {
@@ -196,43 +220,69 @@ const FASimulation = () => {
     }, 300);
   };
 
-  const handlePreviousProblem = () => {
-    if (currentProblemIndex > 0) {
+  const handlePreviousProblem = useCallback(() => {
+    if (currentProblemIndex > 0 && currentProblemIndex <= allProblems.length) {
       const prevProblem = allProblems[currentProblemIndex - 1];
-      // Navigate to new problem - React Router should handle this
-      navigate(`/practice/fa/${prevProblem.id}`, { 
-        replace: false,
-        state: { timestamp: Date.now() } // Add state to force new navigation
-      });
-      // Force scroll to top
-      window.scrollTo(0, 0);
+      if (prevProblem && prevProblem.id && prevProblem.id !== problemId) {
+        // Increment navigation counter to force remount
+        navigationCounterRef.current += 1;
+        const timestamp = Date.now();
+        navigate(`/practice/fa/${prevProblem.id}`, { 
+          replace: true,
+          state: { 
+            fromNavigation: true, 
+            timestamp, 
+            navType: 'previous',
+            navCounter: navigationCounterRef.current
+          }
+        });
+        // Force immediate update
+        window.scrollTo(0, 0);
+      }
     }
-  };
+  }, [navigate, allProblems, currentProblemIndex, problemId]);
 
-  const handleNextProblem = () => {
-    if (currentProblemIndex < allProblems.length - 1) {
+  const handleNextProblem = useCallback(() => {
+    if (currentProblemIndex >= 0 && currentProblemIndex < allProblems.length - 1) {
       const nextProblem = allProblems[currentProblemIndex + 1];
-      // Navigate to new problem - React Router should handle this
-      navigate(`/practice/fa/${nextProblem.id}`, { 
-        replace: false,
-        state: { timestamp: Date.now() } // Add state to force new navigation
-      });
-      // Force scroll to top
-      window.scrollTo(0, 0);
+      if (nextProblem && nextProblem.id && nextProblem.id !== problemId) {
+        // Increment navigation counter to force remount
+        navigationCounterRef.current += 1;
+        const timestamp = Date.now();
+        navigate(`/practice/fa/${nextProblem.id}`, { 
+          replace: true,
+          state: { 
+            fromNavigation: true, 
+            timestamp, 
+            navType: 'next',
+            navCounter: navigationCounterRef.current
+          }
+        });
+        // Force immediate update
+        window.scrollTo(0, 0);
+      }
     }
-  };
+  }, [navigate, allProblems, currentProblemIndex, problemId]);
 
-  const handleRandomProblem = () => {
+  const handleRandomProblem = useCallback(() => {
     const randomIndex = Math.floor(Math.random() * allProblems.length);
     const randomProblem = allProblems[randomIndex];
-    // Navigate to new problem - React Router should handle this
-    navigate(`/practice/fa/${randomProblem.id}`, { 
-      replace: false,
-      state: { timestamp: Date.now() } // Add state to force new navigation
-    });
-    // Force scroll to top
-    window.scrollTo(0, 0);
-  };
+    if (randomProblem && randomProblem.id !== problemId) {
+      // Increment navigation counter to force remount
+      navigationCounterRef.current += 1;
+      const timestamp = Date.now();
+      navigate(`/practice/fa/${randomProblem.id}`, { 
+        replace: true,
+        state: { 
+          fromNavigation: true, 
+          timestamp, 
+          navType: 'random',
+          navCounter: navigationCounterRef.current
+        }
+      });
+      window.scrollTo(0, 0);
+    }
+  }, [navigate, allProblems, problemId]);
 
   const { logout } = useAuth();
 
@@ -406,7 +456,7 @@ const FASimulation = () => {
   }
 
   return (
-    <div className="fa-simulation-page-new" key={`fa-page-${problemId}-${location.key || ''}`}>
+    <div className="fa-simulation-page-new" key={`fa-page-${problemId}-${location.key || location.pathname}`}>
       {/* LeetCode Style Header - Problem Navigation */}
       <div className="fa-header-leetcode">
         <div className="fa-header-left">
@@ -423,7 +473,7 @@ const FASimulation = () => {
             <button 
               className="nav-arrow-btn"
               onClick={handlePreviousProblem}
-              disabled={currentProblemIndex === 0}
+              disabled={currentProblemIndex <= 0}
               title="Previous Problem"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -433,7 +483,7 @@ const FASimulation = () => {
             <button 
               className="nav-arrow-btn"
               onClick={handleNextProblem}
-              disabled={currentProblemIndex === allProblems.length - 1}
+              disabled={currentProblemIndex >= allProblems.length - 1}
               title="Next Problem"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -639,7 +689,7 @@ const FASimulation = () => {
           }}
         >
           <AutomataBuilder 
-            key={problemId}
+            key={`automata-${problemId}-${location.state?.timestamp || ''}`}
             problemId={problemId} 
             problem={problem}
             onTestResultsUpdate={setTestResults}
