@@ -16,6 +16,10 @@ const InteractiveFAPlayground = () => {
   // Example FA: Accepts strings ending in "01" 
   // Language: All binary strings that end with "01"
   // Examples: 01, 001, 101, 1001, 0001, etc.
+  // State meanings:
+  // q0: haven't seen the pattern "01" yet (or just saw '1')
+  // q1: last symbol was '0' (potential start of "01")
+  // q2: last two symbols were "01" (accepting state)
   const fa = {
     states: {
       q0: { x: 150, y: 200, isAccepting: false, isStart: true, label: 'q₀' },
@@ -23,12 +27,17 @@ const InteractiveFAPlayground = () => {
       q2: { x: 350, y: 250, isAccepting: true, isStart: false, label: 'q₂' }
     },
     transitions: [
-      { from: 'q0', to: 'q1', symbol: '0', type: 'normal' },
-      { from: 'q0', to: 'q0', symbol: '1', type: 'self' },
-      { from: 'q1', to: 'q1', symbol: '0', type: 'self' },
-      { from: 'q1', to: 'q2', symbol: '1', type: 'normal' }, // Transition from q1 to q2 with symbol '1'
-      { from: 'q2', to: 'q1', symbol: '0', type: 'normal' },
-      { from: 'q2', to: 'q0', symbol: '1', type: 'normal' }
+      // From q0: haven't seen pattern yet
+      { from: 'q0', to: 'q1', symbol: '0', type: 'normal' }, // Saw '0', might be start of "01"
+      { from: 'q0', to: 'q0', symbol: '1', type: 'self' },    // Saw '1', still haven't seen pattern
+      
+      // From q1: last symbol was '0'
+      { from: 'q1', to: 'q1', symbol: '0', type: 'self' },   // Another '0', still waiting for '1'
+      { from: 'q1', to: 'q2', symbol: '1', type: 'normal' },  // Saw '1' after '0' = pattern "01" found!
+      
+      // From q2: last two symbols were "01" (accepting state)
+      { from: 'q2', to: 'q1', symbol: '0', type: 'normal' }, // New '0' after "01", might start new "01"
+      { from: 'q2', to: 'q0', symbol: '1', type: 'normal' }  // '1' after "01", pattern broken, reset
     ],
     alphabet: ['0', '1']
   };
