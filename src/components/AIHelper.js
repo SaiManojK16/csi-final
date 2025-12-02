@@ -222,7 +222,14 @@ ${problemExamples.map(ex =>
           role="dialog"
           aria-modal="true"
           aria-label="AI Assistant"
-          style={{ '--ai-helper-offset': `${Math.max(testPanelHeight, 0)}px` }}
+          style={{ 
+            '--ai-helper-offset': `${Math.max(testPanelHeight, 0)}px`,
+            // Adjust alignment when test panel is visible
+            alignItems: testPanelHeight > 0 ? 'flex-start' : 'center',
+            paddingTop: testPanelHeight > 0 
+              ? `calc(50vh - ${Math.min(350, testPanelHeight / 2)}px)` 
+              : 'clamp(24px, 4vh, 48px)'
+          }}
           onClick={onClose}
         >
           <div

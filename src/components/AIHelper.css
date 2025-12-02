@@ -92,11 +92,16 @@
   align-items: center;
   justify-content: center;
   padding: clamp(24px, 4vh, 48px) clamp(16px, 6vw, 64px);
+  /* Account for test panel at bottom - center in available space */
   padding-bottom: calc(clamp(24px, 4vh, 48px) + var(--ai-helper-offset, 0px));
+  /* Adjust top padding to center vertically when test panel is visible */
+  padding-top: calc(clamp(24px, 4vh, 48px) + max(0px, var(--ai-helper-offset, 0px) / 2));
   background: rgba(15, 23, 42, 0.38);
   backdrop-filter: blur(6px);
   z-index: 10000; /* Higher than toolbar (500) and other UI elements */
   animation: fadeOverlay 0.2s ease-out;
+  /* Ensure overlay covers entire viewport including space above test panel */
+  box-sizing: border-box;
 }
 
 @keyframes fadeOverlay {
