@@ -562,7 +562,8 @@ const AutomataBuilder = ({ problem, problemId, onTestResultsUpdate, onTestString
               bottom: showTestPanel 
                 ? (isTestPanelMinimized ? '76px' : `${testPanelHeight + 40}px`)
                 : '40px',
-              transition: 'bottom 0.3s ease-out'
+              transition: 'bottom 0.3s ease-out',
+              display: isAIHelperOpen ? 'none' : 'block' // Hide toolbar when AI helper is open
             }}
           >
             <Toolbar 
