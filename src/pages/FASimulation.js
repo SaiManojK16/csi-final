@@ -98,6 +98,8 @@ const FASimulation = () => {
         setIsTestPanelMinimized(true); // Start minimized to give canvas more space
         setHasSubmitted(false); // Reset submission state
         setActiveTab('testcase'); // Reset to testcase tab
+        setIsQuestionPanelMinimized(false); // Reset question panel
+        setActiveLeftTab('question'); // Reset to question tab
         
         // Force scroll to top when problem changes
         window.scrollTo(0, 0);
@@ -743,7 +745,54 @@ const FASimulation = () => {
 
               {activeLeftTab === 'tutorial' && (
                 <div className="tutorial-panel-content">
-                  <p>Tutorial content will be shown here. The guided tour will display instructions in this panel.</p>
+                  <div className="tutorial-header">
+                    <h3>📚 Interactive Tutorial</h3>
+                    <p>Follow the steps below to learn how to build Finite Automata.</p>
+                  </div>
+                  <div className="tutorial-steps-list">
+                    {tourRef.current && tourRef.current.isActive ? (
+                      <div className="tutorial-active">
+                        <p>Tutorial is currently active. Follow the instructions on the canvas.</p>
+                        <button 
+                          className="tutorial-skip-btn"
+                          onClick={() => {
+                            if (tourRef.current && tourRef.current.skipTour) {
+                              tourRef.current.skipTour();
+                            }
+                          }}
+                        >
+                          Skip Tutorial
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="tutorial-welcome">
+                          <h4>Welcome to FA Builder Tutorial!</h4>
+                          <p>This tutorial will guide you through building your first Finite Automaton.</p>
+                          <button 
+                            className="tutorial-start-btn"
+                            onClick={() => {
+                              if (tourRef.current && tourRef.current.startTour) {
+                                tourRef.current.startTour();
+                                setActiveLeftTab('question'); // Switch to question after starting
+                              }
+                            }}
+                          >
+                            Start Tutorial
+                          </button>
+                        </div>
+                        <div className="tutorial-steps-preview">
+                          <h4>What you'll learn:</h4>
+                          <ol>
+                            <li>Add states to your automaton</li>
+                            <li>Set start and accepting states</li>
+                            <li>Create transitions between states</li>
+                            <li>Test your automaton with test cases</li>
+                          </ol>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
               )}
             </>
@@ -793,7 +842,8 @@ const FASimulation = () => {
         <div 
           className={`fa-test-panel ${isTestPanelMinimized ? 'minimized' : ''} ${isTestPanelFullscreen ? 'fullscreen' : ''}`}
           style={{ 
-            height: isTestPanelMinimized ? '36px' : (isTestPanelFullscreen ? '100vh' : `${testPanelHeight}px`)
+            height: isTestPanelMinimized ? '36px' : (isTestPanelFullscreen ? '100vh' : `${testPanelHeight}px`),
+            left: isQuestionPanelMinimized ? '0' : '420px' // Adjust based on question panel state
           }}
         >
           <div className="test-panel-header-bar">
