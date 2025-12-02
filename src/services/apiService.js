@@ -3,14 +3,14 @@ import logger from '../utils/logger';
 
 // Use full backend URL in development to bypass proxy issues
 // If REACT_APP_API_URL is set, use it (should include /api)
-// Otherwise, use localhost in dev or /api in production
+// Otherwise, use localhost in dev or Render backend in production
 let API_BASE_URL = process.env.REACT_APP_API_URL;
 
 if (!API_BASE_URL) {
-  // Fallback: use localhost in dev, or /api in production
+  // Fallback: use localhost in dev, or Render backend in production
   API_BASE_URL = process.env.NODE_ENV === 'development' 
     ? 'http://localhost:5001/api' 
-    : '/api';
+    : 'https://csi-final.onrender.com/api'; // Default to Render backend
 } else {
   // If REACT_APP_API_URL is set, ensure it ends with /api
   // Remove trailing slash if present, then add /api
@@ -18,6 +18,11 @@ if (!API_BASE_URL) {
   if (!API_BASE_URL.endsWith('/api')) {
     API_BASE_URL = `${API_BASE_URL}/api`;
   }
+}
+
+// Log API URL in development for debugging
+if (process.env.NODE_ENV === 'development') {
+  console.log('API Base URL:', API_BASE_URL);
 }
 
 class APIService {

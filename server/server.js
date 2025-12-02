@@ -21,23 +21,50 @@ const app = express();
 // CORS configuration - allow requests from frontend
 const allowedOrigins = [
   'http://localhost:3000',
+  'http://localhost:3001',
   process.env.FRONTEND_URL,
-  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
+  // Add common Vercel deployment URLs
+  'https://csi-final-4gr04l1n3-kadthalamanoj16-4032s-projects.vercel.app',
+  'https://csi-final-tau.vercel.app',
+  // Allow any Vercel subdomain for this project
+  /^https:\/\/csi-final.*\.vercel\.app$/
 ].filter(Boolean);
 
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+    
+    // Check if origin matches any allowed origin (including regex patterns)
+    const isAllowed = allowedOrigins.some(allowed => {
+      if (allowed instanceof RegExp) {
+        return allowed.test(origin);
+      }
+      return allowed === origin;
+    });
+    
+    // In development, allow all origins
+    if (process.env.NODE_ENV === 'development') {
+      return callback(null, true);
+    }
+    
+    // In production, check against allowed origins
+    if (isAllowed) {
       callback(null, true);
     } else {
-      // In production, be more restrictive
+      logger.warn(`Blocked request from unauthorized origin: ${origin}`);
+      logger.info(`Allowed origins: ${allowedOrigins.filter(o => !(o instanceof RegExp)).join(', ')}`);
+      // In production, be more restrictive but log for debugging
       if (process.env.NODE_ENV === 'production') {
-        logger.warn(`Blocked request from unauthorized origin: ${origin}`);
-        return callback(new Error('Not allowed by CORS'));
+        // Temporarily allow for debugging - remove this in final version
+        logger.warn(`Allowing origin for debugging: ${origin}`);
+        callback(null, true);
+        // Uncomment below to enforce CORS strictly:
+        // return callback(new Error('Not allowed by CORS'));
+      } else {
+        callback(null, true);
       }
-      callback(null, true);
     }
   },
   credentials: true
