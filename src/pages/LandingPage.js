@@ -69,7 +69,7 @@ const LandingPage = () => {
               <div className="geometric-shape shape-3"></div>
               <div className="hero-3d-image-wrapper">
                 <svg 
-                  viewBox="0 0 500 300" 
+                  viewBox="0 0 400 300" 
                   className="hero-3d-image"
                   xmlns="http://www.w3.org/2000/svg"
                 >
@@ -84,34 +84,25 @@ const LandingPage = () => {
                   </defs>
                   
                   {/* Start arrow */}
-                  <line x1="40" y1="150" x2="90" y2="150" stroke="#2ec4b6" strokeWidth="2.5" markerEnd="url(#arrow)"/>
+                  <line x1="80" y1="150" x2="150" y2="150" stroke="#2ec4b6" strokeWidth="3" markerEnd="url(#arrow)"/>
                   
-                  {/* State q0 (start, non-accepting) */}
-                  <circle cx="150" cy="150" r="40" fill="url(#stateGradient)" stroke="#1f2a44" strokeWidth="3"/>
-                  <text x="150" y="158" textAnchor="middle" fill="#ffffff" fontSize="20" fontWeight="700">q₀</text>
+                  {/* Single state q0 (start and accepting) */}
+                  <circle cx="250" cy="150" r="55" fill="none" stroke="#1f2a44" strokeWidth="2.5" opacity="0.5"/>
+                  <circle cx="250" cy="150" r="45" fill="url(#stateGradient)" stroke="#1f2a44" strokeWidth="3"/>
+                  <text x="250" y="160" textAnchor="middle" fill="#ffffff" fontSize="24" fontWeight="700">q₀</text>
                   
-                  {/* Self-loop on q0 for '1' */}
-                  <path d="M 150 110 Q 110 110 110 150 Q 110 190 150 190 Q 190 190 190 150 Q 190 110 150 110" 
-                        fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrow)"/>
-                  <text x="110" y="130" fill="#1f2a44" fontSize="18" fontWeight="600">1</text>
+                  {/* Self-loop for '0' */}
+                  <path d="M 250 95 Q 200 95 200 150 Q 200 205 250 205 Q 300 205 300 150 Q 300 95 250 95" 
+                        fill="none" stroke="#1f2a44" strokeWidth="3" markerEnd="url(#arrow)"/>
+                  <text x="200" y="120" fill="#1f2a44" fontSize="20" fontWeight="700">0</text>
                   
-                  {/* Transition q0 -> q1 on '0' */}
-                  <line x1="190" y1="150" x2="310" y2="150" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrow)"/>
-                  <text x="250" y="140" fill="#1f2a44" fontSize="18" fontWeight="600">0</text>
+                  {/* Self-loop for '1' */}
+                  <path d="M 250 205 Q 300 205 300 150 Q 300 95 250 95 Q 200 95 200 150 Q 200 205 250 205" 
+                        fill="none" stroke="#1f2a44" strokeWidth="3" markerEnd="url(#arrow)"/>
+                  <text x="300" y="120" fill="#1f2a44" fontSize="20" fontWeight="700">1</text>
                   
-                  {/* State q1 (accepting - double circle) */}
-                  <circle cx="350" cy="150" r="48" fill="none" stroke="#1f2a44" strokeWidth="2" opacity="0.4"/>
-                  <circle cx="350" cy="150" r="40" fill="url(#stateGradient)" stroke="#1f2a44" strokeWidth="3"/>
-                  <text x="350" y="158" textAnchor="middle" fill="#ffffff" fontSize="20" fontWeight="700">q₁</text>
-                  
-                  {/* Self-loop on q1 for '0' */}
-                  <path d="M 350 110 Q 390 110 390 150 Q 390 190 350 190 Q 310 190 310 150 Q 310 110 350 110" 
-                        fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrow)"/>
-                  <text x="390" y="130" fill="#1f2a44" fontSize="18" fontWeight="600">0</text>
-                  
-                  {/* Transition q1 -> q0 on '1' */}
-                  <path d="M 310 150 Q 250 120 190 150" fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrow)"/>
-                  <text x="250" y="125" fill="#1f2a44" fontSize="18" fontWeight="600">1</text>
+                  {/* Accepting state indicator */}
+                  <text x="250" y="230" textAnchor="middle" fill="#2ec4b6" fontSize="14" fontWeight="600">Accepting State</text>
                 </svg>
               </div>
             </div>
