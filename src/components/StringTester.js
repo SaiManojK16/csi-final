@@ -90,15 +90,15 @@ const StringTester = ({ onTestString, states, startState, transitions, onTestRes
       setCurrentTestIndex(i);
       
       // Clear simulation state before each test
-      if (onSimulationStateChange) {
-        onSimulationStateChange(null);
+      if (onSimulationStateChangeRef.current) {
+        onSimulationStateChangeRef.current(null);
         await new Promise(resolve => setTimeout(resolve, 100)); // Small delay
       }
       
       const testCase = activeTestCases[i];
       
       // Run step-by-step simulation with visual feedback
-      if (onSimulationStateChange) {
+      if (onSimulationStateChangeRef.current) {
         const simulationSteps = [];
         let currentState = startState;
         simulationSteps.push({ state: currentState, symbol: null, step: 0 });
@@ -154,7 +154,7 @@ const StringTester = ({ onTestString, states, startState, transitions, onTestRes
             }
             
             // Update visual state on canvas
-            if (onSimulationStateChange && transition) {
+            if (onSimulationStateChangeRef.current && transition) {
               // Find the transition ID by matching from, to, and symbols
               const transitionId = transitions.findIndex(t => 
                 t.from === transition.from && 
@@ -162,7 +162,7 @@ const StringTester = ({ onTestString, states, startState, transitions, onTestRes
                 t.symbols === transition.symbols
               );
               
-              onSimulationStateChange({
+              onSimulationStateChangeRef.current({
                 activeState: currentState,
                 activeTransition: transitionId >= 0 ? { id: transitionId, ...transition } : transition,
                 simulationStep: j + 1,
@@ -181,8 +181,8 @@ const StringTester = ({ onTestString, states, startState, transitions, onTestRes
           const finalStateObj = states.get(currentState);
           const isAccepting = currentState !== 'DEAD' && finalStateObj?.isAccepting;
           
-          if (onSimulationStateChange) {
-            onSimulationStateChange({
+          if (onSimulationStateChangeRef.current) {
+            onSimulationStateChangeRef.current({
               activeState: currentState,
               activeTransition: null,
               simulationStep: testCase.input.length,
@@ -196,8 +196,8 @@ const StringTester = ({ onTestString, states, startState, transitions, onTestRes
           const finalStateObj = states.get(currentState);
           const isAccepting = finalStateObj?.isAccepting;
           
-          if (onSimulationStateChange) {
-            onSimulationStateChange({
+          if (onSimulationStateChangeRef.current) {
+            onSimulationStateChangeRef.current({
               activeState: currentState,
               activeTransition: null,
               simulationStep: 0,
@@ -212,7 +212,7 @@ const StringTester = ({ onTestString, states, startState, transitions, onTestRes
       // Add delay before showing result
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      const result = onTestString(testCase.input);
+      const result = onTestStringRef.current(testCase.input);
       
       // Test execution complete
       
@@ -233,23 +233,23 @@ const StringTester = ({ onTestString, states, startState, transitions, onTestRes
     }
     
       // Pass results to parent component for AI analysis
-      if (onTestResultsUpdate) {
-        onTestResultsUpdate(results);
+      if (onTestResultsUpdateRef.current) {
+        onTestResultsUpdateRef.current(results);
       }
       
       // Clear simulation state on canvas
-      if (onSimulationStateChange) {
-        onSimulationStateChange(null);
+      if (onSimulationStateChangeRef.current) {
+        onSimulationStateChangeRef.current(null);
       }
       
       setCurrentTestIndex(-1);
       setIsRunning(false);
       setTestResults(results);
       // Switch to result tab after tests complete
-      if (results.length > 0) {
-        setActiveTab('result');
+      if (results.length > 0 && setActiveTabRef.current) {
+        setActiveTabRef.current('result');
       }
-  }, [startState, states, transitions, activeTestCases, onTestString, onSimulationStateChange, onTestResultsUpdate, setActiveTab]);
+  }, [startState, states, transitions, activeTestCases]);
 
   // Listen for runAllTests custom event
   useEffect(() => {
