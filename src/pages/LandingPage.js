@@ -1,9 +1,278 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import FeatureCardFlip from '../components/FeatureCardFlip';
 import InteractiveFAPlayground from '../components/InteractiveFAPlayground';
 import './LandingPage.css';
+
+// Interactive FA Diagram Component for Hero Section
+const InteractiveFADiagram = () => {
+  const [currentState, setCurrentState] = useState('q0');
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [inputString, setInputString] = useState('');
+  const [path, setPath] = useState(['q0']);
+  const [result, setResult] = useState(null);
+
+  // FA Definition: Accepts strings ending with "0"
+  const fa = {
+    states: {
+      q0: { x: 200, y: 200, isAccepting: false, isStart: true, label: 'q₀' },
+      q1: { x: 400, y: 200, isAccepting: true, isStart: false, label: 'q₁' }
+    },
+    transitions: [
+      { from: 'q0', to: 'q1', symbol: '0', type: 'normal' },
+      { from: 'q0', to: 'q0', symbol: '1', type: 'self' },
+      { from: 'q1', to: 'q1', symbol: '0', type: 'self' },
+      { from: 'q1', to: 'q0', symbol: '1', type: 'normal' }
+    ]
+  };
+
+  // Auto-demo: Simulate processing strings
+  useEffect(() => {
+    const demoStrings = ['10', '100', '1100', '0'];
+    let stringIndex = 0;
+    let charIndex = 0;
+    let currentDemoState = 'q0';
+    const demoPath = ['q0'];
+
+    const interval = setInterval(() => {
+      if (stringIndex >= demoStrings.length) {
+        stringIndex = 0;
+        charIndex = 0;
+        currentDemoState = 'q0';
+        demoPath.length = 1;
+        setPath(['q0']);
+        setCurrentState('q0');
+        setInputString('');
+        setResult(null);
+        return;
+      }
+
+      const currentString = demoStrings[stringIndex];
+      
+      if (charIndex === 0) {
+        setInputString('');
+        setPath(['q0']);
+        currentDemoState = 'q0';
+        demoPath.length = 1;
+        setCurrentState('q0');
+        setResult(null);
+      }
+
+      if (charIndex < currentString.length) {
+        const symbol = currentString[charIndex];
+        setInputString(currentString.substring(0, charIndex + 1));
+        
+        const transition = fa.transitions.find(
+          t => t.from === currentDemoState && t.symbol === symbol
+        );
+        
+        if (transition) {
+          currentDemoState = transition.to;
+          demoPath.push(currentDemoState);
+          setPath([...demoPath]);
+          setCurrentState(currentDemoState);
+        }
+        
+        charIndex++;
+        
+        if (charIndex === currentString.length) {
+          const isAccepted = fa.states[currentDemoState].isAccepting;
+          setResult(isAccepted ? 'accepted' : 'rejected');
+          setTimeout(() => {
+            stringIndex++;
+            charIndex = 0;
+          }, 2000);
+        }
+      }
+    }, 800);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="interactive-fa-hero">
+      <svg 
+        viewBox="0 0 600 350" 
+        className="hero-3d-image"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <linearGradient id="stateGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style={{stopColor: '#2ec4b6', stopOpacity: 1}} />
+            <stop offset="100%" style={{stopColor: '#1a9d8f', stopOpacity: 1}} />
+          </linearGradient>
+          <linearGradient id="activeStateGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style={{stopColor: '#667eea', stopOpacity: 1}} />
+            <stop offset="100%" style={{stopColor: '#764ba2', stopOpacity: 1}} />
+          </linearGradient>
+          <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style={{stopColor: 'rgba(46, 196, 182, 0.08)', stopOpacity: 1}} />
+            <stop offset="100%" style={{stopColor: 'rgba(255, 209, 102, 0.08)', stopOpacity: 1}} />
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <filter id="activeGlow">
+            <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+          <marker id="arrow" markerWidth="14" markerHeight="14" refX="13" refY="3.5" orient="auto">
+            <polygon points="0 0, 14 3.5, 0 7" fill="#1f2a44" />
+          </marker>
+          <marker id="activeArrow" markerWidth="14" markerHeight="14" refX="13" refY="3.5" orient="auto">
+            <polygon points="0 0, 14 3.5, 0 7" fill="#667eea" />
+          </marker>
+          <animateTransform
+            attributeName="transform"
+            attributeType="XML"
+            type="rotate"
+            from="0 200 200"
+            to="360 200 200"
+            dur="20s"
+            repeatCount="indefinite"
+            id="pulseRotate"
+          />
+        </defs>
+        
+        {/* Background with subtle animation */}
+        <rect width="600" height="350" fill="url(#bgGradient)" rx="16"/>
+        
+        {/* Animated grid pattern */}
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(46, 196, 182, 0.1)" strokeWidth="1"/>
+          </pattern>
+        </defs>
+        <rect width="600" height="350" fill="url(#grid)" opacity="0.3"/>
+        
+        {/* Title */}
+        <text x="300" y="35" textAnchor="middle" fill="#1f2a44" fontSize="26" fontWeight="800" letterSpacing="-0.5px">
+          Interactive Finite Automaton
+        </text>
+        <text x="300" y="58" textAnchor="middle" fill="#475569" fontSize="14" fontWeight="500">
+          Live Demo: Processing strings ending with "0"
+        </text>
+        
+        {/* Input String Display */}
+        <rect x="200" y="75" width="200" height="35" fill="#ffffff" rx="8" stroke="#e2e8f0" strokeWidth="2"/>
+        <text x="210" y="95" fill="#64748b" fontSize="12" fontWeight="500">Input:</text>
+        <text x="260" y="98" fill="#1f2a44" fontSize="16" fontWeight="700" letterSpacing="2px">
+          {inputString || '—'}
+        </text>
+        {result && (
+          <text x="410" y="98" fill={result === 'accepted' ? '#10b981' : '#ef4444'} fontSize="14" fontWeight="600">
+            {result === 'accepted' ? '✓ Accepted' : '✗ Rejected'}
+          </text>
+        )}
+        
+        {/* Path Display */}
+        <text x="300" y="130" textAnchor="middle" fill="#64748b" fontSize="11" fontWeight="500">
+          Path: {path.join(' → ')}
+        </text>
+        
+        {/* Start arrow with animation */}
+        <line 
+          x1="50" y1="200" x2="140" y2="200" 
+          stroke={currentState === 'q0' ? '#667eea' : '#2ec4b6'} 
+          strokeWidth={currentState === 'q0' ? 4 : 3} 
+          markerEnd={currentState === 'q0' ? "url(#activeArrow)" : "url(#arrow)"}
+          opacity={currentState === 'q0' ? 1 : 0.7}
+        />
+        <text x="30" y="205" fill={currentState === 'q0' ? '#667eea' : '#2ec4b6'} fontSize="11" fontWeight="600">
+          Start
+        </text>
+        
+        {/* State q0 */}
+        <circle 
+          cx="200" cy="200" r="50" 
+          fill={currentState === 'q0' ? "url(#activeStateGradient)" : "url(#stateGradient)"} 
+          stroke={currentState === 'q0' ? "#667eea" : "#1f2a44"} 
+          strokeWidth={currentState === 'q0' ? 4 : 3} 
+          filter={currentState === 'q0' ? "url(#activeGlow)" : "url(#glow)"}
+          style={{ transition: 'all 0.3s ease' }}
+        />
+        <text x="200" y="210" textAnchor="middle" fill="#ffffff" fontSize="24" fontWeight="700">q₀</text>
+        
+        {/* Self-loop on q0 for '1' */}
+        <path 
+          d="M 200 150 Q 140 150 140 200 Q 140 250 200 250 Q 260 250 260 200 Q 260 150 200 150" 
+          fill="none" 
+          stroke={currentState === 'q0' && path.length > 1 && path[path.length - 2] === 'q0' ? "#667eea" : "#1f2a44"} 
+          strokeWidth={currentState === 'q0' && path.length > 1 && path[path.length - 2] === 'q0' ? 4 : 3} 
+          markerEnd={currentState === 'q0' && path.length > 1 && path[path.length - 2] === 'q0' ? "url(#activeArrow)" : "url(#arrow)"}
+          opacity={currentState === 'q0' ? 1 : 0.7}
+        />
+        <rect x="130" y="165" width="18" height="18" fill="#ffffff" rx="3" stroke={currentState === 'q0' && path.length > 1 && path[path.length - 2] === 'q0' ? "#667eea" : "#1f2a44"} strokeWidth="2"/>
+        <text x="139" y="177" textAnchor="middle" fill={currentState === 'q0' && path.length > 1 && path[path.length - 2] === 'q0' ? "#667eea" : "#1f2a44"} fontSize="16" fontWeight="700">1</text>
+        
+        {/* Transition q0 -> q1 on '0' */}
+        <line 
+          x1="250" y1="200" x2="350" y2="200" 
+          stroke={currentState === 'q1' && path.length > 1 && path[path.length - 2] === 'q0' ? "#667eea" : "#1f2a44"} 
+          strokeWidth={currentState === 'q1' && path.length > 1 && path[path.length - 2] === 'q0' ? 4 : 3} 
+          markerEnd={currentState === 'q1' && path.length > 1 && path[path.length - 2] === 'q0' ? "url(#activeArrow)" : "url(#arrow)"}
+          opacity={currentState === 'q1' ? 1 : 0.7}
+        />
+        <rect x="290" y="188" width="22" height="22" fill="#ffffff" rx="4" stroke={currentState === 'q1' && path.length > 1 && path[path.length - 2] === 'q0' ? "#667eea" : "#1f2a44"} strokeWidth="2"/>
+        <text x="301" y="203" textAnchor="middle" fill={currentState === 'q1' && path.length > 1 && path[path.length - 2] === 'q0' ? "#667eea" : "#1f2a44"} fontSize="18" fontWeight="700">0</text>
+        
+        {/* State q1 (accepting - double circle) */}
+        <circle cx="400" cy="200" r="58" fill="none" stroke={currentState === 'q1' ? "#667eea" : "#1f2a44"} strokeWidth="2.5" opacity={currentState === 'q1' ? 0.6 : 0.4}/>
+        <circle 
+          cx="400" cy="200" r="50" 
+          fill={currentState === 'q1' ? "url(#activeStateGradient)" : "url(#stateGradient)"} 
+          stroke={currentState === 'q1' ? "#667eea" : "#1f2a44"} 
+          strokeWidth={currentState === 'q1' ? 4 : 3} 
+          filter={currentState === 'q1' ? "url(#activeGlow)" : "url(#glow)"}
+          style={{ transition: 'all 0.3s ease' }}
+        />
+        <text x="400" y="210" textAnchor="middle" fill="#ffffff" fontSize="24" fontWeight="700">q₁</text>
+        
+        {/* Accepting state indicator */}
+        <circle cx="400" cy="270" r="10" fill={currentState === 'q1' ? "#10b981" : "#2ec4b6"} filter="url(#glow)"/>
+        <text x="400" y="290" textAnchor="middle" fill="#1f2a44" fontSize="13" fontWeight="700">Accept</text>
+        
+        {/* Self-loop on q1 for '0' */}
+        <path 
+          d="M 400 150 Q 460 150 460 200 Q 460 250 400 250 Q 340 250 340 200 Q 340 150 400 150" 
+          fill="none" 
+          stroke={currentState === 'q1' && path.length > 1 && path[path.length - 2] === 'q1' ? "#667eea" : "#1f2a44"} 
+          strokeWidth={currentState === 'q1' && path.length > 1 && path[path.length - 2] === 'q1' ? 4 : 3} 
+          markerEnd={currentState === 'q1' && path.length > 1 && path[path.length - 2] === 'q1' ? "url(#activeArrow)" : "url(#arrow)"}
+          opacity={currentState === 'q1' ? 1 : 0.7}
+        />
+        <rect x="460" y="170" width="22" height="22" fill="#ffffff" rx="4" stroke={currentState === 'q1' && path.length > 1 && path[path.length - 2] === 'q1' ? "#667eea" : "#1f2a44"} strokeWidth="2"/>
+        <text x="471" y="186" textAnchor="middle" fill={currentState === 'q1' && path.length > 1 && path[path.length - 2] === 'q1' ? "#667eea" : "#1f2a44"} fontSize="18" fontWeight="700">0</text>
+        
+        {/* Transition q1 -> q0 on '1' */}
+        <path 
+          d="M 350 200 Q 300 170 250 200" 
+          fill="none" 
+          stroke={currentState === 'q0' && path.length > 1 && path[path.length - 2] === 'q1' ? "#667eea" : "#1f2a44"} 
+          strokeWidth={currentState === 'q0' && path.length > 1 && path[path.length - 2] === 'q1' ? 4 : 3} 
+          markerEnd={currentState === 'q0' && path.length > 1 && path[path.length - 2] === 'q1' ? "url(#activeArrow)" : "url(#arrow)"}
+          opacity={currentState === 'q0' ? 1 : 0.7}
+        />
+        <rect x="290" y="165" width="22" height="22" fill="#ffffff" rx="4" stroke={currentState === 'q0' && path.length > 1 && path[path.length - 2] === 'q1' ? "#667eea" : "#1f2a44"} strokeWidth="2"/>
+        <text x="301" y="180" textAnchor="middle" fill={currentState === 'q0' && path.length > 1 && path[path.length - 2] === 'q1' ? "#667eea" : "#1f2a44"} fontSize="18" fontWeight="700">1</text>
+        
+        {/* Status indicator */}
+        <rect x="240" y="310" width="120" height="28" fill={result === 'accepted' ? 'rgba(16, 185, 129, 0.1)' : result === 'rejected' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(100, 116, 139, 0.1)'} rx="14" stroke={result === 'accepted' ? '#10b981' : result === 'rejected' ? '#ef4444' : '#64748b'} strokeWidth="2"/>
+        <text x="300" y="328" textAnchor="middle" fill={result === 'accepted' ? '#10b981' : result === 'rejected' ? '#ef4444' : '#64748b'} fontSize="13" fontWeight="600">
+          {result === 'accepted' ? '✓ String Accepted' : result === 'rejected' ? '✗ String Rejected' : 'Processing...'}
+        </text>
+      </svg>
+    </div>
+  );
+};
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -68,90 +337,7 @@ const LandingPage = () => {
               <div className="geometric-shape shape-2"></div>
               <div className="geometric-shape shape-3"></div>
               <div className="hero-3d-image-wrapper">
-                <svg 
-                  viewBox="0 0 600 400" 
-                  className="hero-3d-image"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <defs>
-                    <linearGradient id="stateGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" style={{stopColor: '#2ec4b6', stopOpacity: 1}} />
-                      <stop offset="100%" style={{stopColor: '#1a9d8f', stopOpacity: 1}} />
-                    </linearGradient>
-                    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" style={{stopColor: 'rgba(46, 196, 182, 0.05)', stopOpacity: 1}} />
-                      <stop offset="100%" style={{stopColor: 'rgba(255, 209, 102, 0.05)', stopOpacity: 1}} />
-                    </linearGradient>
-                    <filter id="glow">
-                      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                      <feMerge>
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                      </feMerge>
-                    </filter>
-                    <marker id="arrow" markerWidth="12" markerHeight="12" refX="11" refY="3" orient="auto">
-                      <polygon points="0 0, 12 3, 0 6" fill="#1f2a44" />
-                    </marker>
-                  </defs>
-                  
-                  {/* Background */}
-                  <rect width="600" height="400" fill="url(#bgGradient)" rx="20"/>
-                  
-                  {/* Title */}
-                  <text x="300" y="40" textAnchor="middle" fill="#1f2a44" fontSize="24" fontWeight="700">Finite Automaton</text>
-                  <text x="300" y="65" textAnchor="middle" fill="#475569" fontSize="14" fontWeight="500">Accepts strings ending with "0"</text>
-                  
-                  {/* Start arrow */}
-                  <line x1="50" y1="220" x2="100" y2="220" stroke="#2ec4b6" strokeWidth="3" markerEnd="url(#arrow)"/>
-                  <text x="30" y="225" fill="#2ec4b6" fontSize="12" fontWeight="600">Start</text>
-                  
-                  {/* State q0 (start, non-accepting) */}
-                  <circle cx="180" cy="220" r="45" fill="url(#stateGradient)" stroke="#1f2a44" strokeWidth="3" filter="url(#glow)"/>
-                  <text x="180" y="230" textAnchor="middle" fill="#ffffff" fontSize="22" fontWeight="700">q₀</text>
-                  
-                  {/* Self-loop on q0 for '1' */}
-                  <path d="M 180 175 Q 130 175 130 220 Q 130 265 180 265 Q 230 265 230 220 Q 230 175 180 175" 
-                        fill="none" stroke="#1f2a44" strokeWidth="3" markerEnd="url(#arrow)"/>
-                  <text x="130" y="195" fill="#1f2a44" fontSize="20" fontWeight="600">1</text>
-                  
-                  {/* Transition q0 -> q1 on '0' */}
-                  <line x1="225" y1="220" x2="375" y2="220" stroke="#1f2a44" strokeWidth="3" markerEnd="url(#arrow)"/>
-                  <rect x="290" y="205" width="20" height="20" fill="#ffffff" rx="4"/>
-                  <text x="300" y="220" textAnchor="middle" fill="#1f2a44" fontSize="20" fontWeight="700">0</text>
-                  
-                  {/* State q1 (accepting - double circle) */}
-                  <circle cx="420" cy="220" r="52" fill="none" stroke="#1f2a44" strokeWidth="2.5" opacity="0.5"/>
-                  <circle cx="420" cy="220" r="45" fill="url(#stateGradient)" stroke="#1f2a44" strokeWidth="3" filter="url(#glow)"/>
-                  <text x="420" y="230" textAnchor="middle" fill="#ffffff" fontSize="22" fontWeight="700">q₁</text>
-                  
-                  {/* Accepting state indicator */}
-                  <circle cx="420" cy="280" r="8" fill="#2ec4b6"/>
-                  <text x="420" y="300" textAnchor="middle" fill="#1f2a44" fontSize="12" fontWeight="600">Accept</text>
-                  
-                  {/* Self-loop on q1 for '0' */}
-                  <path d="M 420 175 Q 470 175 470 220 Q 470 265 420 265 Q 370 265 370 220 Q 370 175 420 175" 
-                        fill="none" stroke="#1f2a44" strokeWidth="3" markerEnd="url(#arrow)"/>
-                  <rect x="470" y="195" width="20" height="20" fill="#ffffff" rx="4"/>
-                  <text x="480" y="210" textAnchor="middle" fill="#1f2a44" fontSize="20" fontWeight="700">0</text>
-                  
-                  {/* Transition q1 -> q0 on '1' */}
-                  <path d="M 375 220 Q 300 180 225 220" fill="none" stroke="#1f2a44" strokeWidth="3" markerEnd="url(#arrow)"/>
-                  <rect x="290" y="180" width="20" height="20" fill="#ffffff" rx="4"/>
-                  <text x="300" y="195" textAnchor="middle" fill="#1f2a44" fontSize="20" fontWeight="700">1</text>
-                  
-                  {/* Legend */}
-                  <g transform="translate(50, 320)">
-                    <circle cx="0" cy="0" r="8" fill="#2ec4b6" stroke="#1f2a44" strokeWidth="2"/>
-                    <text x="20" y="5" fill="#1f2a44" fontSize="12" fontWeight="500">Start State</text>
-                    
-                    <circle cx="120" cy="0" r="8" fill="none" stroke="#1f2a44" strokeWidth="2" opacity="0.5"/>
-                    <circle cx="120" cy="0" r="8" fill="#2ec4b6" stroke="#1f2a44" strokeWidth="2"/>
-                    <text x="140" y="5" fill="#1f2a44" fontSize="12" fontWeight="500">Accepting State</text>
-                    
-                    <line x1="250" y1="0" x2="280" y2="0" stroke="#1f2a44" strokeWidth="2" markerEnd="url(#arrow)"/>
-                    <text x="290" y="5" fill="#1f2a44" fontSize="12" fontWeight="500">Transition</text>
-                  </g>
-                </svg>
+                <InteractiveFADiagram />
               </div>
             </div>
           </div>
