@@ -643,13 +643,19 @@ const FASimulation = () => {
           <div className="question-tabs">
             <button 
               className={`question-tab ${activeLeftTab === 'question' ? 'active' : ''}`}
-              onClick={() => setActiveLeftTab('question')}
+              onClick={() => {
+                setActiveLeftTab('question');
+                setIsAIHelperOpen(false); // Close AI helper when switching to question
+              }}
             >
               Description
             </button>
             <button 
               className={`question-tab ${activeLeftTab === 'tutorial' ? 'active' : ''}`}
-              onClick={() => setActiveLeftTab('tutorial')}
+              onClick={() => {
+                setActiveLeftTab('tutorial');
+                setIsAIHelperOpen(false); // Close AI helper when switching to tutorial
+              }}
             >
               Tutorial
             </button>
