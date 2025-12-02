@@ -107,7 +107,7 @@ const FASimulation = () => {
         window.scrollTo(0, 0);
       }
     }
-  }, [problemId, location.pathname, location.key, location.state?.timestamp, location.state?.navType]);
+  }, [problemId, location.pathname, location.key]);
 
   // Update ref when function changes
   useEffect(() => {
