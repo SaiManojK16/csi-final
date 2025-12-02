@@ -22,6 +22,15 @@ An interactive web application for learning and building Finite Automata (FA) wi
 - **Error Analysis**: AI explains why your FA fails tests without giving the answer
 - **Guided Learning**: Socratic method approach - helps you discover solutions
 - **Concept Explanations**: Learn automata theory concepts on-demand
+- **Inline Panel Mode**: AI Assistant available as a tab in the question panel
+- **Chat Interface**: Interactive chat-based AI tutoring system
+
+### 📚 Interactive Tutorial System
+- **Step-by-Step Guidance**: Interactive tutorial with visual highlighting
+- **Panel-Based Display**: Tutorial steps displayed inline in the question panel
+- **Element Highlighting**: Spotlight system highlights relevant UI elements during tutorial
+- **Task Tracking**: Tutorial tracks completion of interactive tasks
+- **Non-Intrusive**: Tutorial runs without blocking popups, allowing full interaction
 
 ## Getting Started
 
@@ -65,6 +74,24 @@ An interactive web application for learning and building Finite Automata (FA) wi
 
 ## How to Use
 
+### Getting Started with Tutorial
+
+1. **Access Tutorial**
+   - Navigate to any FA problem
+   - Click the "Tutorial" tab in the left question panel
+   - Click "Start Tutorial" button
+
+2. **Follow Tutorial Steps**
+   - Tutorial instructions appear in the left panel
+   - Relevant UI elements are highlighted on the canvas
+   - Complete tasks as instructed
+   - Use Previous/Next buttons to navigate steps
+
+3. **Panel Management**
+   - Minimize the question panel using the minimize button (→) for more canvas space
+   - Click any tab (Description, Tutorial, AI Assistant) to restore the panel
+   - Tabs remain visible even when panel is minimized
+
 ### Building Your First FA
 
 1. **Add States**
@@ -90,23 +117,28 @@ An interactive web application for learning and building Finite Automata (FA) wi
 
 ### Using the AI Assistant 🤖
 
+#### Accessing AI Assistant
+
+1. **Via Tab**: Click the "AI Assistant" tab in the left question panel
+2. **Via Header Button**: Click the AI icon (✨) in the header bar
+3. **Inline Mode**: AI Assistant displays directly in the question panel when accessed via tab
+
 #### Getting Hints
 
-1. Click the floating AI button (🤖) in the bottom-right corner
-2. Go to the "Hints" tab
-3. Click "Get Hint" to receive guidance
-4. The AI will:
+1. Open the AI Assistant (via tab or header button)
+2. Type your question or request a hint
+3. The AI will:
    - Ask guiding questions
    - Point out what to think about
+   - Provide contextual hints based on your current FA
    - **NOT** give you the direct answer
 
 #### Analyzing Errors
 
 1. Run the test cases first
 2. Open the AI Assistant
-3. Go to the "Analysis" tab
-4. Click "Analyze Errors"
-5. The AI will:
+3. Ask "Why did my tests fail?" or "Analyze my errors"
+4. The AI will:
    - Identify conceptual errors
    - Explain patterns in failed tests
    - Suggest what principles to apply
@@ -140,7 +172,11 @@ src/
 │   ├── AutomataCanvas.js       # Canvas for drawing FA
 │   ├── StringTester.js         # Test case runner
 │   ├── Toolbar.js              # Tool selection
-│   └── AIHelper.js             # AI assistant UI
+│   ├── AIHelper.js             # AI assistant UI (modal and inline modes)
+│   └── GuidedTour.js           # Interactive tutorial system
+├── pages/
+│   ├── FASimulation.js         # Main FA simulation page with tutorial panel
+│   └── LandingPage.js          # Landing page
 ├── services/
 │   └── geminiService.js        # Gemini AI integration
 └── App.js                      # Root component
