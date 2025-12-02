@@ -15,7 +15,8 @@ const AIHelper = ({
   isOpen = false,
   onClose = () => {},
   hasSubmitted = false, // Only allow chat after submission
-  testPanelHeight = 0
+  testPanelHeight = 0,
+  inlineMode = false // If true, render as inline panel instead of modal
 }) => {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
@@ -224,6 +225,150 @@ ${problemExamples.map(ex =>
     ? `calc((100vh - ${testPanelHeight}px) / 2 - 50%)`
     : '50%';
 
+  // Inline mode - render as panel content
+  if (inlineMode && isOpen) {
+    return (
+      <div className="ai-helper-inline">
+        <div className="ai-helper-header">
+          <div className="ai-helper-title">
+            <span className="ai-icon-large">
+              <HiSparkles size={24} />
+            </span>
+            <div>
+              <h3>AI Tutor</h3>
+              <small className="ai-subtitle">Your friendly FA guide</small>
+            </div>
+          </div>
+          <button 
+            className="close-button"
+            onClick={onClose}
+            aria-label="Close AI Helper"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M4 4l8 8M12 4l-8 8"/>
+            </svg>
+          </button>
+        </div>
+
+        <div className="ai-chat-messages">
+          {messages.map((msg, idx) => (
+            <div key={idx} className={`chat-message ${msg.type}`}>
+              <div className="message-content">
+                {msg.type === 'ai' && (
+                  <span className="message-avatar">
+                    <HiSparkles size={20} />
+                  </span>
+                )}
+                {msg.type === 'user' && (
+                  <span className="message-avatar user">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  </span>
+                )}
+                <div className="message-text">
+                  {msg.text}
+                </div>
+              </div>
+            </div>
+          ))}
+          {isLoading && (
+            <div className="chat-message ai">
+              <div className="message-content">
+                <span className="message-avatar">
+                  <HiSparkles size={20} />
+                </span>
+                <div className="message-text">
+                  <div className="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {error && (
+          <div className="ai-error-banner">
+            <span className="error-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </span>
+            <span>{error}</span>
+          </div>
+        )}
+
+        {!hasSubmitted && (
+          <div className="ai-hint-section">
+            <button 
+              className="get-hint-button"
+              onClick={getHint}
+              disabled={isLoading || states.size === 0}
+            >
+              {isLoading ? (
+                <>
+                  <span className="spinner-small"></span>
+                  Getting hint...
+                </>
+              ) : (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M9 21h6M12 3a6 6 0 0 1 6 6c0 2.22-1.21 4.15-3 5.19V17a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-2.81C7.21 13.15 6 11.22 6 9a6 6 0 0 1 6-6z"/>
+                    <path d="M12 9v3"/>
+                  </svg>
+                  Get Hint
+                </>
+              )}
+            </button>
+            {states.size === 0 && (
+              <p className="hint-info">Start building your FA to get hints!</p>
+            )}
+          </div>
+        )}
+
+        {hasSubmitted && (
+          <div className="ai-chat-input">
+            <form onSubmit={handleSend}>
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder="Ask about improvements, what went wrong, or how to fix issues..."
+                disabled={isLoading}
+                className="chat-input-field"
+              />
+              <button 
+                type="submit"
+                disabled={!inputText.trim() || isLoading}
+                className="chat-send-button"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="22" y1="2" x2="11" y2="13"/>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+              </button>
+            </form>
+          </div>
+        )}
+
+        <div className="ai-helper-footer">
+          <small>
+            <HiSparkles size={12} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '4px' }} />
+            Powered by Google Gemini AI
+          </small>
+        </div>
+      </div>
+    );
+  }
+
+  // Modal mode - original overlay behavior
   return (
     <>
       {isOpen && (

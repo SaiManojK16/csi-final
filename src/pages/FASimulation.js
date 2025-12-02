@@ -43,6 +43,8 @@ const FASimulation = () => {
   const resizeStartY = useRef(0);
   const resizeStartHeight = useRef(0);
   const [isAIHelperOpen, setIsAIHelperOpen] = useState(false);
+  const [isQuestionPanelMinimized, setIsQuestionPanelMinimized] = useState(false); // Question panel minimize state
+  const [activeLeftTab, setActiveLeftTab] = useState('question'); // 'question' or 'ai' or 'tutorial'
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const [profileEditOpen, setProfileEditOpen] = useState(false);
@@ -549,11 +551,9 @@ const FASimulation = () => {
           <button 
             className="header-icon-btn ai-assistant-btn"
             onClick={() => {
-              setIsAIHelperOpen(!isAIHelperOpen);
-              // Minimize properties panel when AI opens
-              if (!isAIHelperOpen) {
-                // Properties panel will auto-collapse via prop
-              }
+              setIsAIHelperOpen(true);
+              setActiveLeftTab('ai');
+              setIsQuestionPanelMinimized(false);
             }}
             title="AI Assistant"
           >
@@ -634,48 +634,120 @@ const FASimulation = () => {
       </div>
 
       {/* Main Content Area - Side by Side */}
-      <div className="fa-main-layout" style={{ marginRight: isAIHelperOpen ? '400px' : '0', display: isTestPanelFullscreen ? 'none' : 'flex' }}>
-        {/* Left Panel - Question */}
-        <div className="fa-question-panel">
-          {/* Description Tab Only */}
+      <div className="fa-main-layout" style={{ display: isTestPanelFullscreen ? 'none' : 'flex' }}>
+        {/* Left Panel - Question/Tutorial/AI */}
+        <div className={`fa-question-panel ${isQuestionPanelMinimized ? 'minimized' : ''}`}>
+          {/* Tabs for Question, Tutorial, AI */}
           <div className="question-tabs">
-            <button className="question-tab active">Description</button>
+            <button 
+              className={`question-tab ${activeLeftTab === 'question' ? 'active' : ''}`}
+              onClick={() => setActiveLeftTab('question')}
+            >
+              Description
+            </button>
+            <button 
+              className={`question-tab ${activeLeftTab === 'tutorial' ? 'active' : ''}`}
+              onClick={() => setActiveLeftTab('tutorial')}
+            >
+              Tutorial
+            </button>
+            <button 
+              className={`question-tab ${activeLeftTab === 'ai' ? 'active' : ''}`}
+              onClick={() => {
+                setActiveLeftTab('ai');
+                setIsAIHelperOpen(true);
+              }}
+            >
+              AI Assistant
+            </button>
+            <button
+              className="question-panel-minimize-btn"
+              onClick={() => setIsQuestionPanelMinimized(!isQuestionPanelMinimized)}
+              title={isQuestionPanelMinimized ? 'Expand' : 'Minimize'}
+            >
+              {isQuestionPanelMinimized ? (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              ) : (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M10 4l-4 4 4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </button>
           </div>
           
-          <div className="question-header">
-            <h3>{problem.title || "Problem Statement"}</h3>
-                <div className="problem-badges">
-                  <span className={`badge badge-${problem.difficulty.toLowerCase()}`}>
-                    {problem.difficulty}
-                  </span>
-                  <span className="badge badge-type">{problem.type}</span>
-              <span className="badge badge-hint">Hint</span>
-                </div>
-              </div>
-
-          <div className="question-content">
-              <p className="problem-description">{problem.description}</p>
-
-              {problem.examples && (
-                <div className="examples-section">
-                <h4>Examples</h4>
-                  {problem.examples.map((ex, idx) => (
-                    <div key={idx} className="example">
-                      <span className="example-input">
-                        Input: <code>{ex.input || '(empty)'}</code>
+          {!isQuestionPanelMinimized && (
+            <>
+              {activeLeftTab === 'question' && (
+                <>
+                  <div className="question-header">
+                    <h3>{problem.title || "Problem Statement"}</h3>
+                    <div className="problem-badges">
+                      <span className={`badge badge-${problem.difficulty.toLowerCase()}`}>
+                        {problem.difficulty}
                       </span>
-                      <span className={`example-output ${ex.expected ? 'accept' : 'reject'}`}>
-                        Output: {ex.output}
-                      </span>
+                      <span className="badge badge-type">{problem.type}</span>
+                      <span className="badge badge-hint">Hint</span>
                     </div>
-                  ))}
+                  </div>
+
+                  <div className="question-content">
+                    <p className="problem-description">{problem.description}</p>
+
+                    {problem.examples && (
+                      <div className="examples-section">
+                        <h4>Examples</h4>
+                        {problem.examples.map((ex, idx) => (
+                          <div key={idx} className="example">
+                            <span className="example-input">
+                              Input: <code>{ex.input || '(empty)'}</code>
+                            </span>
+                            <span className={`example-output ${ex.expected ? 'accept' : 'reject'}`}>
+                              Output: {ex.output}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="alphabet-info">
+                      <strong>Alphabet:</strong> {'{' + problem.alphabet.join(', ') + '}'}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {activeLeftTab === 'ai' && (
+                <div className="ai-helper-panel-inline">
+                  <AIHelper
+                    problemStatement={problem?.description || ""}
+                    problemTitle={problem?.title || ""}
+                    problemExamples={problem?.examples || []}
+                    problemAlphabet={problem?.alphabet || ['0', '1']}
+                    states={builderStates.states}
+                    transitions={builderStates.transitions}
+                    startState={builderStates.startState}
+                    testResults={testResults}
+                    isOpen={true}
+                    onClose={() => {
+                      setIsAIHelperOpen(false);
+                      setActiveLeftTab('question');
+                    }}
+                    hasSubmitted={hasSubmitted}
+                    testPanelHeight={0}
+                    inlineMode={true}
+                  />
                 </div>
               )}
 
-              <div className="alphabet-info">
-                <strong>Alphabet:</strong> {'{' + problem.alphabet.join(', ') + '}'}
-              </div>
-            </div>
+              {activeLeftTab === 'tutorial' && (
+                <div className="tutorial-panel-content">
+                  <p>Tutorial content will be shown here. The guided tour will display instructions in this panel.</p>
+                </div>
+              )}
+            </>
+          )}
         </div>
 
         {/* Right Panel - Canvas */}
@@ -826,21 +898,26 @@ const FASimulation = () => {
         </div>
       )}
 
-      {/* AI Helper Panel */}
-      <AIHelper
-        problemStatement={problem?.description || ""}
-        problemTitle={problem?.title || ""}
-        problemExamples={problem?.examples || []}
-        problemAlphabet={problem?.alphabet || ['0', '1']}
-        states={builderStates.states}
-        transitions={builderStates.transitions}
-        startState={builderStates.startState}
-        testResults={testResults}
-        isOpen={isAIHelperOpen}
-        onClose={() => setIsAIHelperOpen(false)}
-        hasSubmitted={hasSubmitted}
-        testPanelHeight={showTestPanel ? (isTestPanelMinimized ? 36 : (isTestPanelFullscreen ? 0 : testPanelHeight)) : 0}
-      />
+      {/* AI Helper Modal - Only show if not in inline mode */}
+      {isAIHelperOpen && activeLeftTab !== 'ai' && (
+        <AIHelper
+          problemStatement={problem?.description || ""}
+          problemTitle={problem?.title || ""}
+          problemExamples={problem?.examples || []}
+          problemAlphabet={problem?.alphabet || ['0', '1']}
+          states={builderStates.states}
+          transitions={builderStates.transitions}
+          startState={builderStates.startState}
+          testResults={testResults}
+          isOpen={isAIHelperOpen}
+          onClose={() => {
+            setIsAIHelperOpen(false);
+            setActiveLeftTab('question');
+          }}
+          hasSubmitted={hasSubmitted}
+          testPanelHeight={showTestPanel ? (isTestPanelMinimized ? 36 : (isTestPanelFullscreen ? 0 : testPanelHeight)) : 0}
+        />
+      )}
 
       {/* Logout Confirmation Dialog */}
       <AlertDialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen} variant="warning">
