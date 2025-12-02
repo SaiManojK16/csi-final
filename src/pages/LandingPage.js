@@ -57,13 +57,6 @@ const LandingPage = () => {
             </div>
           </div>
 
-          <div className="hero-visual">
-            <div className="binary-pattern">
-              <span className="binary-code code-1">1<span className="highlight-binary">0</span>0</span>
-              <span className="binary-code code-2">10<span className="highlight-binary">1</span>0</span>
-              <span className="binary-code code-3"><span className="highlight-binary">0</span>01</span>
-            </div>
-          </div>
         </div>
       </section>
 
