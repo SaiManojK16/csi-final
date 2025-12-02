@@ -218,6 +218,10 @@
 /* Hero Illustration */
 .hero-visual {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
 }
 
 .hero-visual::before {
@@ -227,6 +231,35 @@
   border-radius: var(--radius-lg);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
   z-index: 0;
+}
+
+.hero-clipart {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  background: var(--brand-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--brand-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hero-clipart:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 28px 56px rgba(31, 42, 68, 0.12);
+}
+
+.hero-clipart svg {
+  width: 100%;
+  height: auto;
+  max-width: 400px;
+  filter: drop-shadow(0 4px 12px rgba(31, 42, 68, 0.08));
 }
 
 .hero-image-container {

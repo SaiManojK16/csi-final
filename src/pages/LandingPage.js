@@ -57,6 +57,66 @@ const LandingPage = () => {
             </div>
           </div>
 
+          <div className="hero-visual">
+            <div className="hero-clipart">
+              <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                {/* Student figure */}
+                <g id="student">
+                  {/* Head */}
+                  <circle cx="200" cy="120" r="35" fill="#ffd166" stroke="#1f2a44" strokeWidth="2"/>
+                  {/* Hair */}
+                  <path d="M 170 100 Q 200 80 230 100 Q 240 90 230 110 Q 200 95 170 110 Z" fill="#1f2a44"/>
+                  {/* Body */}
+                  <rect x="180" y="155" width="40" height="80" rx="5" fill="#667eea" stroke="#1f2a44" strokeWidth="2"/>
+                  {/* Arms */}
+                  <ellipse cx="165" cy="190" rx="8" ry="25" fill="#ffd166" stroke="#1f2a44" strokeWidth="2"/>
+                  <ellipse cx="235" cy="190" rx="8" ry="25" fill="#ffd166" stroke="#1f2a44" strokeWidth="2"/>
+                  {/* Legs */}
+                  <rect x="185" y="235" width="12" height="50" rx="3" fill="#2ec4b6" stroke="#1f2a44" strokeWidth="2"/>
+                  <rect x="203" y="235" width="12" height="50" rx="3" fill="#2ec4b6" stroke="#1f2a44" strokeWidth="2"/>
+                  {/* Eyes */}
+                  <circle cx="190" cy="115" r="4" fill="#1f2a44"/>
+                  <circle cx="210" cy="115" r="4" fill="#1f2a44"/>
+                  {/* Smile */}
+                  <path d="M 190 130 Q 200 138 210 130" stroke="#1f2a44" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                </g>
+                
+                {/* Book/Tablet */}
+                <g id="book" transform="translate(140, 200)">
+                  <rect x="0" y="0" width="60" height="40" rx="3" fill="#fff7f0" stroke="#1f2a44" strokeWidth="2"/>
+                  <line x1="5" y1="15" x2="55" y2="15" stroke="#1f2a44" strokeWidth="1.5"/>
+                  <line x1="5" y1="22" x2="50" y2="22" stroke="#1f2a44" strokeWidth="1.5"/>
+                  <line x1="5" y1="29" x2="45" y2="29" stroke="#1f2a44" strokeWidth="1.5"/>
+                </g>
+                
+                {/* Thought bubble */}
+                <g id="thought">
+                  <circle cx="280" cy="100" r="25" fill="#fff" stroke="#1f2a44" strokeWidth="2"/>
+                  <circle cx="300" cy="85" r="8" fill="#fff" stroke="#1f2a44" strokeWidth="1.5"/>
+                  <circle cx="310" cy="75" r="5" fill="#fff" stroke="#1f2a44" strokeWidth="1"/>
+                  {/* FA symbol in thought */}
+                  <circle cx="280" cy="100" r="12" fill="none" stroke="#667eea" strokeWidth="2"/>
+                  <circle cx="280" cy="100" r="8" fill="none" stroke="#ff8a65" strokeWidth="1.5"/>
+                  <line x1="272" y1="100" x2="288" y2="100" stroke="#1f2a44" strokeWidth="1.5" markerEnd="url(#arrowhead)"/>
+                </g>
+                
+                {/* Arrow marker */}
+                <defs>
+                  <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#1f2a44"/>
+                  </marker>
+                </defs>
+                
+                {/* Stars for learning effect */}
+                <g id="stars">
+                  <path d="M 320 180 L 325 190 L 335 190 L 327 197 L 330 207 L 320 200 L 310 207 L 313 197 L 305 190 L 315 190 Z" fill="#ffd166" opacity="0.8"/>
+                  <path d="M 80 160 L 83 167 L 90 167 L 84 172 L 87 179 L 80 174 L 73 179 L 76 172 L 70 167 L 77 167 Z" fill="#2ec4b6" opacity="0.8"/>
+                  <path d="M 350 250 L 352 255 L 357 255 L 353 258 L 355 263 L 350 260 L 345 263 L 347 258 L 343 255 L 348 255 Z" fill="#ff8a65" opacity="0.8"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+
         </div>
       </section>
 
