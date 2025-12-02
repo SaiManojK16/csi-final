@@ -6,11 +6,20 @@ import logger from '../utils/logger';
 // Otherwise, use localhost in dev or Render backend in production
 let API_BASE_URL = process.env.REACT_APP_API_URL;
 
+// Determine if we're in development (local machine) or production (deployed)
+const isLocalDevelopment = window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1' ||
+                          window.location.hostname.startsWith('192.168.') ||
+                          window.location.hostname.startsWith('10.0.');
+
 if (!API_BASE_URL) {
   // Fallback: use localhost in dev, or Render backend in production
-  API_BASE_URL = process.env.NODE_ENV === 'development' 
-    ? 'http://localhost:5001/api' 
-    : 'https://csi-final.onrender.com/api'; // Default to Render backend
+  if (isLocalDevelopment) {
+    API_BASE_URL = 'http://localhost:5001/api';
+  } else {
+    // Production/deployed - use Render backend
+    API_BASE_URL = 'https://csi-final.onrender.com/api';
+  }
 } else {
   // If REACT_APP_API_URL is set, ensure it ends with /api
   // Remove trailing slash if present, then add /api
@@ -20,10 +29,11 @@ if (!API_BASE_URL) {
   }
 }
 
-// Log API URL in development for debugging
-if (process.env.NODE_ENV === 'development') {
-  console.log('API Base URL:', API_BASE_URL);
-}
+// Log API URL for debugging (always log in browser console)
+console.log('🌐 API Base URL:', API_BASE_URL);
+console.log('📍 Hostname:', window.location.hostname);
+console.log('🔧 Is Local Dev:', isLocalDevelopment);
+console.log('🔑 REACT_APP_API_URL:', process.env.REACT_APP_API_URL || 'not set');
 
 class APIService {
   constructor() {
@@ -65,8 +75,19 @@ class APIService {
     logger.api(method, endpoint, 'pending');
 
     try {
+      console.log(`🚀 Making ${method} request to: ${url}`);
       const response = await fetch(url, config);
-      const data = await response.json();
+      
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get('content-type');
+      let data;
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        console.error('Non-JSON response:', text);
+        throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}`);
+      }
 
       logger.api(method, endpoint, response.status);
 
@@ -74,16 +95,33 @@ class APIService {
         logger.error('API request failed:', {
           endpoint,
           status: response.status,
-          message: data.message
+          message: data.message,
+          url
         });
-        throw new Error(data.message || 'API request failed');
+        throw new Error(data.message || `API request failed with status ${response.status}`);
       }
 
       return data;
     } catch (error) {
+      // Enhanced error logging
+      const errorMessage = error.message || 'Unknown error';
+      const isNetworkError = errorMessage.includes('Failed to fetch') || 
+                            errorMessage.includes('ERR_CONNECTION_REFUSED') ||
+                            errorMessage.includes('NetworkError');
+      
+      if (isNetworkError) {
+        console.error('❌ Network Error - Cannot connect to backend:', {
+          url,
+          endpoint,
+          message: errorMessage,
+          hint: 'Check if backend is running and CORS is configured correctly'
+        });
+        throw new Error(`Unable to connect to server. Please check if the backend is running at ${API_BASE_URL}`);
+      }
+      
       logger.error('API Error:', {
         endpoint,
-        message: error.message,
+        message: errorMessage,
         url
       });
       throw error;
