@@ -37,7 +37,7 @@ const FASimulation = () => {
   
   const [showTestPanel, setShowTestPanel] = useState(true); // Always show
   const [testPanelHeight, setTestPanelHeight] = useState(300);
-  const [isTestPanelMinimized, setIsTestPanelMinimized] = useState(false); // Start expanded to show test cases
+  const [isTestPanelMinimized, setIsTestPanelMinimized] = useState(true); // Start minimized to give canvas more space
   const [isTestPanelFullscreen, setIsTestPanelFullscreen] = useState(false); // Fullscreen mode
   const [isResizing, setIsResizing] = useState(false);
   const resizeStartY = useRef(0);
@@ -93,7 +93,7 @@ const FASimulation = () => {
         setIsSubmitting(false);
         setSubmitMessage(null);
         setIsAIHelperOpen(false);
-        setIsTestPanelMinimized(false); // Start expanded to show test cases
+        setIsTestPanelMinimized(true); // Start minimized to give canvas more space
         setHasSubmitted(false); // Reset submission state
         setActiveTab('testcase'); // Reset to testcase tab
         
