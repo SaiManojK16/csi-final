@@ -68,66 +68,76 @@ const LandingPage = () => {
               <div className="geometric-shape shape-2"></div>
               <div className="geometric-shape shape-3"></div>
               <div className="hero-3d-image-wrapper">
-                <img 
-                  src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&h=600&fit=crop&q=80" 
-                  alt="3D Finite Automata State Machine Visualization"
+                <svg 
+                  viewBox="0 0 600 400" 
                   className="hero-3d-image"
-                  onError={(e) => {
-                    // Fallback: Create a canvas-based FA visualization
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 600;
-                    canvas.height = 400;
-                    const ctx = canvas.getContext('2d');
-                    
-                    // Draw a simple FA diagram
-                    ctx.fillStyle = '#2ec4b6';
-                    ctx.strokeStyle = '#1f2a44';
-                    ctx.lineWidth = 3;
-                    
-                    // Draw states (circles)
-                    const states = [
-                      { x: 150, y: 200, label: 'q0', isAccepting: false },
-                      { x: 300, y: 150, label: 'q1', isAccepting: false },
-                      { x: 450, y: 200, label: 'q2', isAccepting: true }
-                    ];
-                    
-                    states.forEach(state => {
-                      ctx.beginPath();
-                      ctx.arc(state.x, state.y, 40, 0, 2 * Math.PI);
-                      ctx.fill();
-                      ctx.stroke();
-                      
-                      if (state.isAccepting) {
-                        ctx.beginPath();
-                        ctx.arc(state.x, state.y, 50, 0, 2 * Math.PI);
-                        ctx.stroke();
-                      }
-                      
-                      ctx.fillStyle = '#ffffff';
-                      ctx.font = 'bold 20px Arial';
-                      ctx.textAlign = 'center';
-                      ctx.fillText(state.label, state.x, state.y + 7);
-                      ctx.fillStyle = '#2ec4b6';
-                    });
-                    
-                    // Draw transitions
-                    ctx.strokeStyle = '#1f2a44';
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    ctx.moveTo(190, 200);
-                    ctx.lineTo(260, 170);
-                    ctx.stroke();
-                    ctx.fillText('0', 225, 180);
-                    
-                    ctx.beginPath();
-                    ctx.moveTo(340, 150);
-                    ctx.lineTo(410, 190);
-                    ctx.stroke();
-                    ctx.fillText('1', 375, 170);
-                    
-                    e.target.src = canvas.toDataURL();
-                  }}
-                />
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  {/* Background gradient */}
+                  <defs>
+                    <linearGradient id="faGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{stopColor: 'rgba(46, 196, 182, 0.1)', stopOpacity: 1}} />
+                      <stop offset="100%" style={{stopColor: 'rgba(255, 209, 102, 0.1)', stopOpacity: 1}} />
+                    </linearGradient>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                      <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  
+                  {/* Start arrow */}
+                  <line x1="50" y1="200" x2="100" y2="200" stroke="#2ec4b6" strokeWidth="3" markerEnd="url(#arrowhead)"/>
+                  <text x="30" y="205" fill="#1f2a44" fontSize="14" fontWeight="600">Start</text>
+                  
+                  {/* State q0 (start state) */}
+                  <circle cx="150" cy="200" r="35" fill="#2ec4b6" stroke="#1f2a44" strokeWidth="3" filter="url(#glow)"/>
+                  <text x="150" y="207" textAnchor="middle" fill="#ffffff" fontSize="18" fontWeight="700">q₀</text>
+                  
+                  {/* Transition q0 -> q1 on '0' */}
+                  <path d="M 185 200 Q 250 150 300 150" fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrowhead)"/>
+                  <text x="240" y="165" fill="#1f2a44" fontSize="16" fontWeight="600">0</text>
+                  
+                  {/* State q1 */}
+                  <circle cx="350" cy="150" r="35" fill="#2ec4b6" stroke="#1f2a44" strokeWidth="3" filter="url(#glow)"/>
+                  <text x="350" y="157" textAnchor="middle" fill="#ffffff" fontSize="18" fontWeight="700">q₁</text>
+                  
+                  {/* Self-loop on q1 for '0' */}
+                  <path d="M 350 115 Q 390 115 390 150 Q 390 185 350 185 Q 310 185 310 150 Q 310 115 350 115" 
+                        fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrowhead)"/>
+                  <text x="390" y="130" fill="#1f2a44" fontSize="16" fontWeight="600">0</text>
+                  
+                  {/* Transition q1 -> q2 on '1' */}
+                  <path d="M 350 185 Q 400 220 450 250" fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrowhead)"/>
+                  <text x="400" y="210" fill="#1f2a44" fontSize="16" fontWeight="600">1</text>
+                  
+                  {/* State q2 (accepting state - double circle) */}
+                  <circle cx="500" cy="250" r="45" fill="none" stroke="#1f2a44" strokeWidth="2" opacity="0.6"/>
+                  <circle cx="500" cy="250" r="35" fill="#2ec4b6" stroke="#1f2a44" strokeWidth="3" filter="url(#glow)"/>
+                  <text x="500" y="257" textAnchor="middle" fill="#ffffff" fontSize="18" fontWeight="700">q₂</text>
+                  
+                  {/* Transition q2 -> q1 on '0' */}
+                  <path d="M 465 240 Q 400 200 385 185" fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrowhead)"/>
+                  <text x="420" y="210" fill="#1f2a44" fontSize="16" fontWeight="600">0</text>
+                  
+                  {/* Transition q2 -> q0 on '1' */}
+                  <path d="M 500 295 Q 400 280 200 280 Q 150 280 150 235" fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrowhead)"/>
+                  <text x="300" y="290" fill="#1f2a44" fontSize="16" fontWeight="600">1</text>
+                  
+                  {/* Self-loop on q0 for '1' */}
+                  <path d="M 150 165 Q 110 165 110 200 Q 110 235 150 235 Q 190 235 190 200 Q 190 165 150 165" 
+                        fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrowhead)"/>
+                  <text x="110" y="185" fill="#1f2a44" fontSize="16" fontWeight="600">1</text>
+                  
+                  {/* Arrow marker definition */}
+                  <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                      <polygon points="0 0, 10 3, 0 6" fill="#1f2a44" />
+                    </marker>
+                  </defs>
+                </svg>
               </div>
             </div>
           </div>
