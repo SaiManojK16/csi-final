@@ -1,0 +1,275 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+
+% Title formatting
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+% Hyperlink colors
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+\title{Milestone 6 Submission\\Team B (SVSMC)}
+\author{CS5610 - Web Development}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Team Information}
+\textbf{Team:} B (SVSMC)\\
+\textbf{Members:}
+\begin{itemize}[leftmargin=*]
+    \item Sai Manoj Kartala
+    \item Vinay Padala
+    \item Siddartha Kurmashetti
+    \item Sai Charan Reddy Kanukula
+    \item Sushma Kasarla
+\end{itemize}
+
+\textbf{Course:} CS5610 - Web Development\\
+\textbf{Project:} Acceptly - Finite Automata Learning Platform
+
+\newpage
+
+\section{Part 1: Project Summary}
+
+\textbf{Acceptly} is an interactive web-based drill and practice system for learning finite automata (FA) theory. The platform combines visual FA building, automated testing, and AI-powered tutoring to help students master automata concepts through hands-on practice.
+
+\subsection{What It Does}
+
+The application provides:
+\begin{itemize}
+    \item \textbf{Visual FA Builder:} Interactive canvas where users draw states and transitions to construct finite automata
+    \item \textbf{Automated Testing:} Real-time validation of FA against predefined test cases with detailed feedback
+    \item \textbf{AI-Powered Tutoring:} Google Gemini integration provides contextual hints, error analysis, and guided learning without giving direct answers
+    \item \textbf{Progress Tracking:} User dashboard tracking completion rates, problem history, and learning insights
+    \item \textbf{Problem Library:} 50+ FA problems and MCQ quizzes with varying difficulty levels
+    \item \textbf{Interactive Playground:} Landing page demonstration tool for FA concepts
+\end{itemize}
+
+\subsection{Implementation Technologies}
+
+\textbf{Frontend:}
+\begin{itemize}
+    \item React 18.2.0 (JavaScript)
+    \item React Router 7.9.5 for navigation
+    \item Canvas API for FA visualization
+    \item Three.js for 3D graphics
+    \item CSS3 with custom design system
+\end{itemize}
+
+\textbf{Backend:}
+\begin{itemize}
+    \item Node.js with Express 5.1.0
+    \item MongoDB with Mongoose 8.19.2 for data persistence
+    \item JWT (jsonwebtoken) for authentication
+    \item bcryptjs for password hashing
+    \item Nodemailer for email notifications
+\end{itemize}
+
+\textbf{AI Integration:}
+\begin{itemize}
+    \item Google Generative AI (Gemini 2.0 Flash) for intelligent tutoring
+\end{itemize}
+
+\textbf{Deployment:}
+\begin{itemize}
+    \item Frontend: Vercel (serverless hosting)
+    \item Backend: Render (Node.js hosting)
+    \item Database: MongoDB Atlas (cloud database)
+\end{itemize}
+
+\subsection{Key Features}
+
+\begin{enumerate}
+    \item \textbf{User Authentication:} Secure signup/login with email verification and password reset
+    \item \textbf{FA Simulation:} Drag-and-drop state creation, transition drawing, and real-time validation
+    \item \textbf{AI Assistant:} Context-aware hints that guide users toward solutions using Socratic method
+    \item \textbf{Progress Analytics:} Visual insights into learning patterns and problem-solving trends
+    \item \textbf{Responsive Design:} Mobile-friendly interface with modern UI/UX
+\end{enumerate}
+
+\subsection{AI Usage (Optional Extra Credit)}
+
+\textbf{AI Software Used:} Google Gemini 2.0 Flash API
+
+\textbf{How AI Was Used in the Project:}
+
+The application integrates Google Gemini 2.0 Flash as an intelligent tutoring assistant to help students learn finite automata. The AI assistant provides the following features:
+
+\begin{enumerate}
+    \item \textbf{Contextual Hints:} When students are stuck building their finite automata, they can request hints. The AI analyzes the current FA structure (states, transitions, symbols) and provides contextual guidance without revealing the complete solution. The hints are designed to guide students toward discovering the answer themselves, following a Socratic teaching method.
+    
+    \item \textbf{Error Analysis:} When a student's FA fails test cases, the AI assistant can analyze the failures and explain what went wrong. It identifies missing transitions, incorrect state configurations, or logical errors in the automaton design, helping students understand their mistakes.
+    
+    \item \textbf{Conceptual Explanations:} The AI can explain finite automata concepts on-demand, helping students understand theoretical aspects such as state transitions, accepting states, and language recognition.
+    
+    \item \textbf{Adaptive Learning:} The AI adapts its responses based on the student's current progress and the specific problem they are working on, providing personalized learning support.
+\end{enumerate}
+
+\textbf{Technical Implementation:}
+\begin{itemize}
+    \item The AI service is implemented in \texttt{src/services/geminiService.js}
+    \item Uses Google Generative AI SDK to interact with Gemini 2.0 Flash model
+    \item FA structure is serialized and sent to the AI with problem context
+    \item AI responses are formatted and displayed in the application's AI Helper component
+    \item The system is designed to prevent the AI from giving direct answers, instead focusing on guided learning
+\end{itemize}
+
+\textbf{Example Usage:}
+When a student is working on a problem to create an FA that accepts strings ending with "01", they can click the "Get Hint" button. The AI will analyze their current automaton and provide hints like "Consider what happens when you read a '0' followed by a '1'" or "Think about which state should be the accepting state" without directly showing the solution.
+
+\textbf{AI Integration Benefits:}
+\begin{itemize}
+    \item Provides 24/7 personalized tutoring support
+    \item Helps students learn through guided discovery rather than direct answers
+    \item Reduces frustration by providing timely hints when students are stuck
+    \item Enhances learning outcomes by explaining concepts in context
+\end{itemize}
+
+\newpage
+
+\section{Part 2: Access Information}
+
+\subsection{Deployment URLs}
+
+\textbf{Frontend (Production):}\\
+\url{https://csi-final-4gr04l1n3-kadthalamanoj16-4032s-projects.vercel.app}
+
+\textbf{Frontend (Alternative Domain):}\\
+\url{https://csi-final-tau.vercel.app}
+
+\textbf{Backend API:}\\
+\url{https://csi-final.onrender.com}
+
+\subsection{Instructor Access Credentials}
+
+For testing purposes, please use the following test account:
+
+\textbf{Email:} instructor@test.com\\
+\textbf{Password:} Test123456!
+
+\textbf{Alternative Test Account:}\\
+\textbf{Email:} testuser@test.com\\
+\textbf{Password:} Test123456!
+
+\textbf{Note:} If these accounts do not exist, please create them using the signup feature on the application, or contact the team for account creation.
+
+\subsection{How to Use the Software}
+
+\subsubsection{Using the Deployed Application}
+
+\begin{enumerate}
+    \item \textbf{Navigate to the frontend URL} (listed above)
+    \item \textbf{Sign up for a new account} or use the test credentials provided
+    \item \textbf{Explore the features:}
+    \begin{itemize}
+        \item \textbf{Landing Page:} View the interactive FA playground
+        \item \textbf{Dashboard:} See your progress and statistics
+        \item \textbf{Problems:} Browse and select FA problems or MCQ quizzes
+        \item \textbf{FA Simulation:} Build finite automata on the interactive canvas
+        \item \textbf{AI Hints:} Click the AI assistant button for contextual help
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Key Features to Test}
+
+\begin{enumerate}
+    \item \textbf{User Registration/Login}
+    \begin{itemize}
+        \item Sign up with email, username, and password
+        \item Login with existing credentials
+        \item Password reset functionality
+    \end{itemize}
+    
+    \item \textbf{FA Building}
+    \begin{itemize}
+        \item Click canvas to create states
+        \item Drag states to reposition
+        \item Right-click states for options (mark as accepting, set start state)
+        \item Click and drag between states to create transitions
+        \item Enter transition symbols (0, 1, etc.)
+    \end{itemize}
+    
+    \item \textbf{Testing Your FA}
+    \begin{itemize}
+        \item Click ``Run Tests'' button
+        \item View test results with pass/fail indicators
+        \item See execution paths for each test case
+    \end{itemize}
+    
+    \item \textbf{AI Assistant}
+    \begin{itemize}
+        \item Click ``Get Hint'' button
+        \item Receive contextual hints based on your current FA structure
+        \item Get error analysis if tests fail
+    \end{itemize}
+    
+    \item \textbf{Progress Tracking}
+    \begin{itemize}
+        \item View dashboard for completion statistics
+        \item Check Insights page for learning analytics
+        \item See problem history and performance metrics
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Local Setup (If Needed)}
+
+\begin{enumerate}
+    \item \textbf{Install dependencies:}
+    \begin{verbatim}
+    npm install
+    \end{verbatim}
+    
+    \item \textbf{Set up environment variables:}
+    \begin{itemize}
+        \item Create a \texttt{.env} file in the root directory
+        \item Add required variables (MONGODB\_URI, JWT\_SECRET, GEMINI\_API\_KEY, etc.)
+    \end{itemize}
+    
+    \item \textbf{Start the development servers:}
+    \begin{verbatim}
+    npm run dev
+    \end{verbatim}
+    \begin{itemize}
+        \item Frontend runs on http://localhost:3001
+        \item Backend runs on http://localhost:5001
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Troubleshooting}
+
+\begin{itemize}
+    \item If the frontend shows connection errors, check that the backend is running
+    \item Clear browser cache if you see stale content
+    \item Use Chrome or Firefox for best compatibility
+    \item Ensure JavaScript is enabled
+\end{itemize}
+
+\subsection{Notes for Instructor}
+
+\begin{itemize}
+    \item The application requires JavaScript to be enabled
+    \item Best viewed in Chrome, Firefox, or Safari (latest versions)
+    \item Mobile responsive but optimized for desktop experience
+    \item All user data is stored in MongoDB Atlas
+    \item AI features require valid Google Gemini API key (configured in production)
+\end{itemize}
+
+\subsection{Contact Information}
+
+If you encounter any issues or have questions during evaluation, please contact the team via email. We will respond to any questions within 24 hours.
+
+\end{document}
+
