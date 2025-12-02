@@ -690,6 +690,9 @@ const FASimulation = () => {
             <button 
               className={`question-tab ${activeLeftTab === 'question' ? 'active' : ''}`}
               onClick={() => {
+                if (isQuestionPanelMinimized) {
+                  setIsQuestionPanelMinimized(false); // Restore panel when clicking tab
+                }
                 setActiveLeftTab('question');
                 setIsAIHelperOpen(false); // Close AI helper when switching to question
               }}
@@ -699,6 +702,9 @@ const FASimulation = () => {
             <button 
               className={`question-tab ${activeLeftTab === 'tutorial' ? 'active' : ''}`}
               onClick={() => {
+                if (isQuestionPanelMinimized) {
+                  setIsQuestionPanelMinimized(false); // Restore panel when clicking tab
+                }
                 setActiveLeftTab('tutorial');
                 setIsAIHelperOpen(false); // Close AI helper when switching to tutorial
               }}
@@ -708,6 +714,9 @@ const FASimulation = () => {
             <button 
               className={`question-tab ${activeLeftTab === 'ai' ? 'active' : ''}`}
               onClick={() => {
+                if (isQuestionPanelMinimized) {
+                  setIsQuestionPanelMinimized(false); // Restore panel when clicking tab
+                }
                 setActiveLeftTab('ai');
                 setIsAIHelperOpen(true);
               }}
