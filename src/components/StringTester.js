@@ -50,8 +50,8 @@ const StringTester = ({ onTestString, states, startState, transitions, onTestRes
   // Use appropriate test cases based on FA structure
   const activeTestCases = hasNoTransitions ? emptyStringOnlyTestCases : testCases;
 
-  // Run all test cases
-  const runAllTests = async () => {
+  // Run all test cases - use useCallback to ensure stable reference
+  const runAllTests = useCallback(async () => {
     if (!startState || states.size === 0) {
       return;
     }
@@ -249,7 +249,7 @@ const StringTester = ({ onTestString, states, startState, transitions, onTestRes
       if (results.length > 0) {
         setActiveTab('result');
       }
-  };
+  }, [startState, states, transitions, activeTestCases, onTestString, onSimulationStateChange, onTestResultsUpdate, setActiveTab]);
 
   // Listen for runAllTests custom event
   useEffect(() => {
@@ -260,7 +260,7 @@ const StringTester = ({ onTestString, states, startState, transitions, onTestRes
     };
     window.addEventListener('runAllTests', handleRunAllTests);
     return () => window.removeEventListener('runAllTests', handleRunAllTests);
-  }, [startState, states.size, isRunning]); // Removed dependencies that cause re-renders
+  }, [startState, states.size, isRunning, runAllTests]); // Include runAllTests in dependencies
 
   // Get overall test results
   const getTestSummary = () => {
