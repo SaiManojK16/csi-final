@@ -113,6 +113,23 @@ const FASimulation = () => {
     testStringFnRef.current = testStringFn;
   }, [testStringFn]);
 
+  // Sync tour active state with ref
+  useEffect(() => {
+    const checkTourState = () => {
+      if (tourRef.current && tourRef.current.isActive !== undefined) {
+        setIsTourActive(tourRef.current.isActive);
+      }
+    };
+    
+    // Check immediately
+    checkTourState();
+    
+    // Check periodically to sync state (in case tour state changes externally)
+    const interval = setInterval(checkTourState, 500);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   // Resize handler for bottom panel
   const handleMouseDown = useCallback((e) => {
     e.preventDefault();
