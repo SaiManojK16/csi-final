@@ -3,7 +3,7 @@ services:
     name: acceptly-backend
     env: node
     plan: free
-    buildCommand: npm install
+    buildCommand: npm install --production=false
     startCommand: node server/server.js
     envVars:
       - key: NODE_ENV
@@ -13,6 +13,12 @@ services:
       - key: MONGODB_URI
         sync: false
       - key: JWT_SECRET
+        sync: false
+      - key: EMAIL_USER
+        value: Teamacceptly@gmail.com
+      - key: EMAIL_APP_PASSWORD
+        sync: false
+      - key: FRONTEND_URL
         sync: false
       - key: REACT_APP_API_URL
         value: https://acceptly-backend.onrender.com
