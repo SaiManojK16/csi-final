@@ -69,7 +69,7 @@ const LandingPage = () => {
               <div className="geometric-shape shape-3"></div>
               <div className="hero-3d-image-wrapper">
                 <svg 
-                  viewBox="0 0 500 300" 
+                  viewBox="0 0 600 400" 
                   className="hero-3d-image"
                   xmlns="http://www.w3.org/2000/svg"
                 >
@@ -78,40 +78,79 @@ const LandingPage = () => {
                       <stop offset="0%" style={{stopColor: '#2ec4b6', stopOpacity: 1}} />
                       <stop offset="100%" style={{stopColor: '#1a9d8f', stopOpacity: 1}} />
                     </linearGradient>
-                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                      <polygon points="0 0, 10 3, 0 6" fill="#1f2a44" />
+                    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{stopColor: 'rgba(46, 196, 182, 0.05)', stopOpacity: 1}} />
+                      <stop offset="100%" style={{stopColor: 'rgba(255, 209, 102, 0.05)', stopOpacity: 1}} />
+                    </linearGradient>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                      <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                    <marker id="arrow" markerWidth="12" markerHeight="12" refX="11" refY="3" orient="auto">
+                      <polygon points="0 0, 12 3, 0 6" fill="#1f2a44" />
                     </marker>
                   </defs>
                   
+                  {/* Background */}
+                  <rect width="600" height="400" fill="url(#bgGradient)" rx="20"/>
+                  
+                  {/* Title */}
+                  <text x="300" y="40" textAnchor="middle" fill="#1f2a44" fontSize="24" fontWeight="700">Finite Automaton</text>
+                  <text x="300" y="65" textAnchor="middle" fill="#475569" fontSize="14" fontWeight="500">Accepts strings ending with "0"</text>
+                  
                   {/* Start arrow */}
-                  <line x1="40" y1="150" x2="90" y2="150" stroke="#2ec4b6" strokeWidth="2.5" markerEnd="url(#arrow)"/>
+                  <line x1="50" y1="220" x2="100" y2="220" stroke="#2ec4b6" strokeWidth="3" markerEnd="url(#arrow)"/>
+                  <text x="30" y="225" fill="#2ec4b6" fontSize="12" fontWeight="600">Start</text>
                   
                   {/* State q0 (start, non-accepting) */}
-                  <circle cx="150" cy="150" r="40" fill="url(#stateGradient)" stroke="#1f2a44" strokeWidth="3"/>
-                  <text x="150" y="158" textAnchor="middle" fill="#ffffff" fontSize="20" fontWeight="700">q₀</text>
+                  <circle cx="180" cy="220" r="45" fill="url(#stateGradient)" stroke="#1f2a44" strokeWidth="3" filter="url(#glow)"/>
+                  <text x="180" y="230" textAnchor="middle" fill="#ffffff" fontSize="22" fontWeight="700">q₀</text>
                   
                   {/* Self-loop on q0 for '1' */}
-                  <path d="M 150 110 Q 110 110 110 150 Q 110 190 150 190 Q 190 190 190 150 Q 190 110 150 110" 
-                        fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrow)"/>
-                  <text x="110" y="130" fill="#1f2a44" fontSize="18" fontWeight="600">1</text>
+                  <path d="M 180 175 Q 130 175 130 220 Q 130 265 180 265 Q 230 265 230 220 Q 230 175 180 175" 
+                        fill="none" stroke="#1f2a44" strokeWidth="3" markerEnd="url(#arrow)"/>
+                  <text x="130" y="195" fill="#1f2a44" fontSize="20" fontWeight="600">1</text>
                   
                   {/* Transition q0 -> q1 on '0' */}
-                  <line x1="190" y1="150" x2="310" y2="150" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrow)"/>
-                  <text x="250" y="140" fill="#1f2a44" fontSize="18" fontWeight="600">0</text>
+                  <line x1="225" y1="220" x2="375" y2="220" stroke="#1f2a44" strokeWidth="3" markerEnd="url(#arrow)"/>
+                  <rect x="290" y="205" width="20" height="20" fill="#ffffff" rx="4"/>
+                  <text x="300" y="220" textAnchor="middle" fill="#1f2a44" fontSize="20" fontWeight="700">0</text>
                   
                   {/* State q1 (accepting - double circle) */}
-                  <circle cx="350" cy="150" r="48" fill="none" stroke="#1f2a44" strokeWidth="2" opacity="0.4"/>
-                  <circle cx="350" cy="150" r="40" fill="url(#stateGradient)" stroke="#1f2a44" strokeWidth="3"/>
-                  <text x="350" y="158" textAnchor="middle" fill="#ffffff" fontSize="20" fontWeight="700">q₁</text>
+                  <circle cx="420" cy="220" r="52" fill="none" stroke="#1f2a44" strokeWidth="2.5" opacity="0.5"/>
+                  <circle cx="420" cy="220" r="45" fill="url(#stateGradient)" stroke="#1f2a44" strokeWidth="3" filter="url(#glow)"/>
+                  <text x="420" y="230" textAnchor="middle" fill="#ffffff" fontSize="22" fontWeight="700">q₁</text>
+                  
+                  {/* Accepting state indicator */}
+                  <circle cx="420" cy="280" r="8" fill="#2ec4b6"/>
+                  <text x="420" y="300" textAnchor="middle" fill="#1f2a44" fontSize="12" fontWeight="600">Accept</text>
                   
                   {/* Self-loop on q1 for '0' */}
-                  <path d="M 350 110 Q 390 110 390 150 Q 390 190 350 190 Q 310 190 310 150 Q 310 110 350 110" 
-                        fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrow)"/>
-                  <text x="390" y="130" fill="#1f2a44" fontSize="18" fontWeight="600">0</text>
+                  <path d="M 420 175 Q 470 175 470 220 Q 470 265 420 265 Q 370 265 370 220 Q 370 175 420 175" 
+                        fill="none" stroke="#1f2a44" strokeWidth="3" markerEnd="url(#arrow)"/>
+                  <rect x="470" y="195" width="20" height="20" fill="#ffffff" rx="4"/>
+                  <text x="480" y="210" textAnchor="middle" fill="#1f2a44" fontSize="20" fontWeight="700">0</text>
                   
                   {/* Transition q1 -> q0 on '1' */}
-                  <path d="M 310 150 Q 250 120 190 150" fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrow)"/>
-                  <text x="250" y="125" fill="#1f2a44" fontSize="18" fontWeight="600">1</text>
+                  <path d="M 375 220 Q 300 180 225 220" fill="none" stroke="#1f2a44" strokeWidth="3" markerEnd="url(#arrow)"/>
+                  <rect x="290" y="180" width="20" height="20" fill="#ffffff" rx="4"/>
+                  <text x="300" y="195" textAnchor="middle" fill="#1f2a44" fontSize="20" fontWeight="700">1</text>
+                  
+                  {/* Legend */}
+                  <g transform="translate(50, 320)">
+                    <circle cx="0" cy="0" r="8" fill="#2ec4b6" stroke="#1f2a44" strokeWidth="2"/>
+                    <text x="20" y="5" fill="#1f2a44" fontSize="12" fontWeight="500">Start State</text>
+                    
+                    <circle cx="120" cy="0" r="8" fill="none" stroke="#1f2a44" strokeWidth="2" opacity="0.5"/>
+                    <circle cx="120" cy="0" r="8" fill="#2ec4b6" stroke="#1f2a44" strokeWidth="2"/>
+                    <text x="140" y="5" fill="#1f2a44" fontSize="12" fontWeight="500">Accepting State</text>
+                    
+                    <line x1="250" y1="0" x2="280" y2="0" stroke="#1f2a44" strokeWidth="2" markerEnd="url(#arrow)"/>
+                    <text x="290" y="5" fill="#1f2a44" fontSize="12" fontWeight="500">Transition</text>
+                  </g>
                 </svg>
               </div>
             </div>
