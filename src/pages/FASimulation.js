@@ -214,9 +214,15 @@ const FASimulation = () => {
   };
 
   const handleRunTests = () => {
+    // Always show test panel
     if (!showTestPanel) {
       setShowTestPanel(true);
     }
+    // Maximize test panel (set to half screen height)
+    setIsTestPanelMinimized(false);
+    setTestPanelHeight(400); // Set to half screen approximately
+    // Switch to testcase tab
+    setActiveTab('testcase');
     // Trigger test run from StringTester after panel opens
     setTimeout(() => {
       const event = new CustomEvent('runAllTests');

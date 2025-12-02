@@ -260,7 +260,7 @@ const StringTester = ({ onTestString, states, startState, transitions, onTestRes
     };
     window.addEventListener('runAllTests', handleRunAllTests);
     return () => window.removeEventListener('runAllTests', handleRunAllTests);
-  }, [startState, states.size, isRunning, onTestString, onSimulationStateChange, activeTestCases]);
+  }, [startState, states.size, isRunning]); // Removed dependencies that cause re-renders
 
   // Get overall test results
   const getTestSummary = () => {

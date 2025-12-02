@@ -56,12 +56,14 @@ export const GuidedTour = ({
   }), [externalCompletedTasks, storageKey, isActive, onSkip]);
 
   // Check if tour has been completed before
+  // Don't show welcome modal if tutorial is accessed via tab (showWelcome will be false)
   useEffect(() => {
     const hasCompleted = localStorage.getItem(storageKey);
-    if (!hasCompleted && showWelcome) {
+    // Only show welcome modal if showWelcome is true (not accessed via tab)
+    if (!hasCompleted && showWelcome && !isActive) {
       setShowWelcomeModal(true);
     }
-  }, [storageKey, showWelcome]);
+  }, [storageKey, showWelcome, isActive]);
 
   // Store refs to elements we've modified for cleanup
   const modifiedElementsRef = useRef([]);
