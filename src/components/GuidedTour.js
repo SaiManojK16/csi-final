@@ -54,6 +54,16 @@ export const GuidedTour = ({
     },
     isActive: isActive
   }), [externalCompletedTasks, storageKey, isActive, onSkip]);
+  
+  // Notify parent when tour active state changes
+  useEffect(() => {
+    if (onTourStartRef && onTourStartRef.current) {
+      // Update the ref's isActive property
+      if (onTourStartRef.current.isActive !== isActive) {
+        onTourStartRef.current.isActive = isActive;
+      }
+    }
+  }, [isActive, onTourStartRef]);
 
   // Check if tour has been completed before
   // Don't show welcome modal if tutorial is accessed via tab (showWelcome will be false)

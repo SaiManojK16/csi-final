@@ -48,6 +48,7 @@ const FASimulation = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const [profileEditOpen, setProfileEditOpen] = useState(false);
+  const [isTourActive, setIsTourActive] = useState(false); // Track tour active state
   const profileRef = useRef(null);
 
   // Handle test results from AutomataBuilder
@@ -762,7 +763,7 @@ const FASimulation = () => {
                     <p>Follow the steps below to learn how to build Finite Automata.</p>
                   </div>
                   <div className="tutorial-steps-list">
-                    {tourRef.current && tourRef.current.isActive ? (
+                    {isTourActive ? (
                       <div className="tutorial-active">
                         <p>Tutorial is currently active. Follow the instructions on the canvas.</p>
                         <button 
@@ -770,6 +771,7 @@ const FASimulation = () => {
                           onClick={() => {
                             if (tourRef.current && tourRef.current.skipTour) {
                               tourRef.current.skipTour();
+                              setIsTourActive(false);
                             }
                           }}
                         >
@@ -784,9 +786,13 @@ const FASimulation = () => {
                           <button 
                             className="tutorial-start-btn"
                             onClick={() => {
+                              console.log('Start Tutorial clicked, tourRef:', tourRef.current);
                               if (tourRef.current && tourRef.current.startTour) {
                                 tourRef.current.startTour();
+                                setIsTourActive(true);
                                 setActiveLeftTab('question'); // Switch to question after starting
+                              } else {
+                                console.warn('Tour ref not available or startTour method missing');
                               }
                             }}
                           >
@@ -842,6 +848,10 @@ const FASimulation = () => {
             onSimulationStateChange={setSimulationState}
             onTourRef={(ref) => { 
               tourRef.current = ref;
+              // Update tour active state when ref is set
+              if (ref && ref.isActive !== undefined) {
+                setIsTourActive(ref.isActive);
+              }
             }}
             testResults={testResults}
             isAIHelperOpen={isAIHelperOpen}
