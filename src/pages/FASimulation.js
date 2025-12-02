@@ -540,13 +540,16 @@ const FASimulation = () => {
             className="header-icon-btn tutorial-btn"
             onClick={() => {
               console.log('Tutorial button clicked, tourRef:', tourRef.current);
-              if (tourRef.current && tourRef.current.startTour) {
-                tourRef.current.startTour();
+              const tourMethods = tourRef.current?.current;
+              if (tourMethods && typeof tourMethods.startTour === 'function') {
+                tourMethods.startTour();
+                setIsTourActive(true);
               } else {
                 console.warn('Tour ref not available or startTour method missing');
                 // Try to find the tour component and start it
                 const event = new CustomEvent('startTour');
                 window.dispatchEvent(event);
+                setIsTourActive(true);
               }
             }}
             title="Start Tutorial - Learn how to use the FA Builder"
