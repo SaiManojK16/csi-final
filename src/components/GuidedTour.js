@@ -455,6 +455,44 @@ export const GuidedTour = ({
     }
   };
 
+  // Don't show welcome modal if rendering inline
+  if (renderInline && showWelcomeModal) {
+    setShowWelcomeModal(false);
+  }
+
+  // If rendering inline, only render overlay/spotlight (no tooltip popup)
+  if (renderInline) {
+    if (!isActive) return null;
+    
+    return createPortal(
+      <>
+        {/* Minimal overlay - allows all interactions, just darkens background */}
+        <div
+          className="tour-overlay tour-entered"
+          style={{
+            pointerEvents: 'none', // Allow all clicks through
+            background: 'rgba(0, 0, 0, 0.3)' // Lighter overlay so UI is more visible
+          }}
+        />
+
+        {/* Spotlight - visual highlight only, doesn't block anything */}
+        {spotlightPosition && (
+          <div
+            className="tour-spotlight"
+            style={{
+              top: `${spotlightPosition.top}px`,
+              left: `${spotlightPosition.left}px`,
+              width: `${spotlightPosition.width}px`,
+              height: `${spotlightPosition.height}px`,
+              pointerEvents: 'none' // Allow clicks through
+            }}
+          />
+        )}
+      </>,
+      document.body
+    );
+  }
+
   if (!isActive && !showWelcomeModal) return null;
 
   return createPortal(
@@ -538,8 +576,8 @@ export const GuidedTour = ({
             />
           )}
 
-          {/* Tooltip */}
-          {tooltipPosition && step && (
+          {/* Tooltip - Only render if NOT in inline mode */}
+          {!renderInline && tooltipPosition && step && (
             <div
               ref={tooltipRef}
               className={`tour-tooltip ${isDragging ? 'dragging' : ''}`}
