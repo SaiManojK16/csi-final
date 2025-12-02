@@ -234,18 +234,23 @@ export const GuidedTour = ({
   }, [currentStep, isActive]);
 
   const calculateTooltipPosition = (rect, position) => {
-    const tooltipWidth = 600; // Increased width for better content display
-    // Calculate available viewport height - leave more padding for safety
-    const padding = 20;
-    const rightPadding = 40; // Extra padding on the right side
-    const availableHeight = window.innerHeight - (padding * 2);
-    
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     
+    // Responsive tooltip width - adapts to screen size
+    const tooltipWidth = Math.min(600, Math.max(500, viewportWidth * 0.9));
+    
+    // Calculate available viewport height - leave more padding for safety and footer
+    const padding = Math.max(20, viewportHeight * 0.02); // 2% of viewport or 20px minimum
+    const footerHeight = 80; // Reserve space for footer
+    const headerHeight = 60; // Reserve space for header
+    const availableHeight = Math.min(600, viewportHeight - padding * 2 - footerHeight - headerHeight);
+    
+    const rightPadding = Math.max(40, viewportWidth * 0.05); // 5% of viewport or 40px minimum
+    
     // Center the tooltip on screen for better visibility, but ensure it fits
-    // Use available height instead of fixed tooltipHeight
-    let top = Math.max(padding, (viewportHeight - availableHeight) / 2);
+    // Ensure tooltip doesn't go below viewport
+    let top = Math.max(padding, Math.min((viewportHeight - availableHeight - footerHeight - headerHeight) / 2, viewportHeight - availableHeight - footerHeight - padding));
     let left = Math.max(padding, (viewportWidth - tooltipWidth - rightPadding) / 2);
     
     // Determine arrow direction based on where the element is relative to centered tooltip
@@ -487,16 +492,18 @@ export const GuidedTour = ({
               className={`tour-tooltip ${isDragging ? 'dragging' : ''}`}
               data-position={tooltipPosition.arrowDirection || 'bottom'}
               style={{
-                top: `${Math.max(20, Math.min(tooltipPosition.top + tooltipOffset.y, window.innerHeight - 100))}px`,
-                left: `${Math.max(20, Math.min(tooltipPosition.left + tooltipOffset.x, window.innerWidth - (tooltipPosition.width || 600) - 40))}px`,
+                top: `${Math.max(20, Math.min(tooltipPosition.top + tooltipOffset.y, window.innerHeight - 200))}px`,
+                left: `${Math.max(20, Math.min(tooltipPosition.left + tooltipOffset.x, window.innerWidth - Math.min(tooltipPosition.width || 600, window.innerWidth * 0.9) - 40))}px`,
                 right: 'auto',
-                width: `${tooltipPosition.width || 600}px`,
+                width: `${Math.min(tooltipPosition.width || 600, window.innerWidth * 0.9)}px`,
                 maxWidth: `${Math.min(tooltipPosition.width || 600, window.innerWidth - 80)}px`,
                 height: 'auto',
-                maxHeight: `${window.innerHeight - 40}px`,
+                maxHeight: `${Math.min(window.innerHeight - 80, 600)}px`,
+                minHeight: '300px',
                 transform: 'none',
                 position: 'fixed',
-                cursor: isDragging ? 'grabbing' : 'default'
+                cursor: isDragging ? 'grabbing' : 'default',
+                bottom: 'auto'
               }}
             >
               {/* Directional Arrow pointing to element */}
