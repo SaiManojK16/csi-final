@@ -12,7 +12,7 @@ const FA3DVisualization = () => {
 
     // Scene setup
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf8f9fa);
+    scene.background = new THREE.Color(0xfff7f0);
     sceneRef.current = scene;
 
     const width = mountRef.current.clientWidth;
@@ -37,30 +37,42 @@ const FA3DVisualization = () => {
     controlsRef.current = controls;
 
     // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     scene.add(ambientLight);
 
-    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight1.position.set(5, 5, 5);
+    const directionalLight1 = new THREE.DirectionalLight(0xffd166, 0.9);
+    directionalLight1.position.set(5, 8, 5);
     scene.add(directionalLight1);
 
-    const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
-    directionalLight2.position.set(-5, -5, -5);
+    const directionalLight2 = new THREE.DirectionalLight(0x2ec4b6, 0.6);
+    directionalLight2.position.set(-5, 3, -5);
     scene.add(directionalLight2);
 
-    // Define FA: Single state accepting all strings
+    const pointLight = new THREE.PointLight(0xff8a65, 0.5, 100);
+    pointLight.position.set(0, 0, 10);
+    scene.add(pointLight);
+
+    // Define FA: 2-state DFA for strings ending with "0"
     const states = [
       { 
         id: 'q0', 
-        position: new THREE.Vector3(0, 0, 0), 
+        position: new THREE.Vector3(-2, 0, 0), 
         isStart: true, 
+        isAccept: false 
+      },
+      { 
+        id: 'q1', 
+        position: new THREE.Vector3(2, 0, 0), 
+        isStart: false, 
         isAccept: true 
       }
     ];
 
     const transitions = [
-      { from: 'q0', to: 'q0', symbol: '0' },
-      { from: 'q0', to: 'q0', symbol: '1' }
+      { from: 'q0', to: 'q1', symbol: '0' },
+      { from: 'q0', to: 'q0', symbol: '1' },
+      { from: 'q1', to: 'q1', symbol: '0' },
+      { from: 'q1', to: 'q0', symbol: '1' }
     ];
 
     // Create state meshes
@@ -68,48 +80,65 @@ const FA3DVisualization = () => {
     const stateGroup = new THREE.Group();
 
     states.forEach(stateData => {
+      const stateColor = stateData.isAccept ? 0xff8a65 : 0x667eea;
+      const emissiveColor = stateData.isAccept ? 0xff8a65 : 0x667eea;
+
       // Outer circle for accepting state
       if (stateData.isAccept) {
-        const outerGeometry = new THREE.TorusGeometry(1.2, 0.08, 16, 32);
+        const outerGeometry = new THREE.TorusGeometry(1.3, 0.1, 16, 32);
         const outerMaterial = new THREE.MeshPhongMaterial({ 
-          color: 0x2ec4b6,
-          emissive: 0x2ec4b6,
-          emissiveIntensity: 0.2
+          color: 0xff8a65,
+          emissive: 0xff8a65,
+          emissiveIntensity: 0.3,
+          shininess: 80
         });
         const outerTorus = new THREE.Mesh(outerGeometry, outerMaterial);
         outerTorus.rotation.x = Math.PI / 2;
+        outerTorus.position.copy(stateData.position);
         stateGroup.add(outerTorus);
       }
 
-      // Main state sphere
-      const geometry = new THREE.SphereGeometry(1, 32, 32);
+      // Main state sphere with gradient effect
+      const geometry = new THREE.SphereGeometry(1.1, 32, 32);
       const material = new THREE.MeshPhongMaterial({ 
-        color: 0x2ec4b6,
-        emissive: 0x2ec4b6,
-        emissiveIntensity: 0.1,
-        shininess: 100
+        color: stateColor,
+        emissive: emissiveColor,
+        emissiveIntensity: 0.2,
+        shininess: 120,
+        specular: 0xffffff
       });
       const stateMesh = new THREE.Mesh(geometry, material);
       stateMesh.position.copy(stateData.position);
       stateGroup.add(stateMesh);
 
-      // State label (using sprite for text)
+      // Add glow effect
+      const glowGeometry = new THREE.SphereGeometry(1.2, 32, 32);
+      const glowMaterial = new THREE.MeshBasicMaterial({ 
+        color: emissiveColor,
+        transparent: true,
+        opacity: 0.2
+      });
+      const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
+      glowMesh.position.copy(stateData.position);
+      stateGroup.add(glowMesh);
+
+      // State label
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d');
       canvas.width = 256;
       canvas.height = 256;
       context.fillStyle = '#ffffff';
-      context.font = 'Bold 120px Arial';
+      context.font = 'Bold 140px Arial';
       context.textAlign = 'center';
       context.textBaseline = 'middle';
-      context.fillText('q₀', 128, 128);
+      context.fillText(stateData.id === 'q0' ? 'q₀' : 'q₁', 128, 128);
       
       const texture = new THREE.CanvasTexture(canvas);
       const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
       const sprite = new THREE.Sprite(spriteMaterial);
-      sprite.scale.set(1.5, 1.5, 1);
+      sprite.scale.set(1.8, 1.8, 1);
       sprite.position.copy(stateData.position);
-      sprite.position.y += 1.5;
+      sprite.position.y += 1.6;
       stateGroup.add(sprite);
 
       stateMeshes.set(stateData.id, { mesh: stateMesh, group: stateGroup });
@@ -117,69 +146,122 @@ const FA3DVisualization = () => {
 
     scene.add(stateGroup);
 
-    // Create transitions (self-loops)
+    // Create transitions
     const transitionGroup = new THREE.Group();
     
     transitions.forEach((transitionData, index) => {
-      const stateMesh = stateMeshes.get(transitionData.from);
-      if (!stateMesh) return;
+      const fromState = stateMeshes.get(transitionData.from);
+      const toState = stateMeshes.get(transitionData.to);
+      if (!fromState || !toState) return;
 
-      // Create curved self-loop
-      const curve = new THREE.QuadraticBezierCurve3(
-        new THREE.Vector3(1.2, 0, 0),
-        new THREE.Vector3(0, index === 0 ? 2 : -2, 0),
-        new THREE.Vector3(-1.2, 0, 0)
-      );
+      const fromPos = states.find(s => s.id === transitionData.from).position;
+      const toPos = states.find(s => s.id === transitionData.to).position;
+      const isSelfLoop = transitionData.from === transitionData.to;
 
-      const points = curve.getPoints(50);
-      const geometry = new THREE.BufferGeometry().setFromPoints(points);
-      const material = new THREE.LineBasicMaterial({ 
-        color: 0x1f2a44,
-        linewidth: 3
-      });
-      const curveLine = new THREE.Line(geometry, material);
-      transitionGroup.add(curveLine);
+      if (isSelfLoop) {
+        // Self-loop: curved path
+        const height = index % 2 === 0 ? 1.8 : -1.8;
+        const curve = new THREE.QuadraticBezierCurve3(
+          new THREE.Vector3(fromPos.x + 1.3, fromPos.y, fromPos.z),
+          new THREE.Vector3(fromPos.x, fromPos.y + height, fromPos.z),
+          new THREE.Vector3(fromPos.x - 1.3, fromPos.y, fromPos.z)
+        );
 
-      // Add arrow at the end
-      const arrowHelper = new THREE.ArrowHelper(
-        new THREE.Vector3(-1, 0, 0).normalize(),
-        new THREE.Vector3(-1.2, 0, 0),
-        0.5,
-        0x1f2a44,
-        0.3,
-        0.2
-      );
-      transitionGroup.add(arrowHelper);
+        const points = curve.getPoints(50);
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const material = new THREE.LineBasicMaterial({ 
+          color: 0x475569,
+          linewidth: 4
+        });
+        const curveLine = new THREE.Line(geometry, material);
+        transitionGroup.add(curveLine);
 
-      // Add symbol label
-      const symbolCanvas = document.createElement('canvas');
-      const symbolContext = symbolCanvas.getContext('2d');
-      symbolCanvas.width = 128;
-      symbolCanvas.height = 128;
-      symbolContext.fillStyle = '#1f2a44';
-      symbolContext.font = 'Bold 80px Arial';
-      symbolContext.textAlign = 'center';
-      symbolContext.textBaseline = 'middle';
-      symbolContext.fillText(transitionData.symbol, 64, 64);
-      
-      const symbolTexture = new THREE.CanvasTexture(symbolCanvas);
-      const symbolSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: symbolTexture }));
-      symbolSprite.scale.set(0.8, 0.8, 1);
-      symbolSprite.position.set(0, index === 0 ? 2.5 : -2.5, 0);
-      transitionGroup.add(symbolSprite);
+        // Arrow for self-loop
+        const arrowDirection = new THREE.Vector3(-1, 0, 0).normalize();
+        const arrowHelper = new THREE.ArrowHelper(
+          arrowDirection,
+          new THREE.Vector3(fromPos.x - 1.3, fromPos.y, fromPos.z),
+          0.6,
+          0x475569,
+          0.4,
+          0.25
+        );
+        transitionGroup.add(arrowHelper);
+
+        // Symbol label for self-loop
+        const symbolCanvas = document.createElement('canvas');
+        const symbolContext = symbolCanvas.getContext('2d');
+        symbolCanvas.width = 128;
+        symbolCanvas.height = 128;
+        symbolContext.fillStyle = '#1f2a44';
+        symbolContext.font = 'Bold 90px Arial';
+        symbolContext.textAlign = 'center';
+        symbolContext.textBaseline = 'middle';
+        symbolContext.fillText(transitionData.symbol, 64, 64);
+        
+        const symbolTexture = new THREE.CanvasTexture(symbolCanvas);
+        const symbolSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: symbolTexture }));
+        symbolSprite.scale.set(0.9, 0.9, 1);
+        symbolSprite.position.set(fromPos.x, fromPos.y + height + 0.3, fromPos.z);
+        transitionGroup.add(symbolSprite);
+      } else {
+        // Normal transition: straight line with arrow
+        const direction = new THREE.Vector3().subVectors(toPos, fromPos).normalize();
+        const startPoint = new THREE.Vector3().copy(fromPos).add(direction.multiplyScalar(1.1));
+        const endPoint = new THREE.Vector3().copy(toPos).sub(direction.multiplyScalar(1.1));
+        
+        const lineGeometry = new THREE.BufferGeometry().setFromPoints([startPoint, endPoint]);
+        const lineMaterial = new THREE.LineBasicMaterial({ 
+          color: 0x475569,
+          linewidth: 4
+        });
+        const line = new THREE.Line(lineGeometry, lineMaterial);
+        transitionGroup.add(line);
+
+        // Arrow
+        const arrowHelper = new THREE.ArrowHelper(
+          direction,
+          endPoint,
+          0.6,
+          0x475569,
+          0.4,
+          0.25
+        );
+        transitionGroup.add(arrowHelper);
+
+        // Symbol label
+        const midPoint = new THREE.Vector3().addVectors(startPoint, endPoint).multiplyScalar(0.5);
+        const symbolCanvas = document.createElement('canvas');
+        const symbolContext = symbolCanvas.getContext('2d');
+        symbolCanvas.width = 128;
+        symbolCanvas.height = 128;
+        symbolContext.fillStyle = '#1f2a44';
+        symbolContext.font = 'Bold 90px Arial';
+        symbolContext.textAlign = 'center';
+        symbolContext.textBaseline = 'middle';
+        symbolContext.fillText(transitionData.symbol, 64, 64);
+        
+        const symbolTexture = new THREE.CanvasTexture(symbolCanvas);
+        const symbolSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: symbolTexture }));
+        symbolSprite.scale.set(0.9, 0.9, 1);
+        symbolSprite.position.copy(midPoint);
+        symbolSprite.position.y += 0.5;
+        transitionGroup.add(symbolSprite);
+      }
     });
 
     scene.add(transitionGroup);
 
     // Start arrow indicator
     const startArrowGroup = new THREE.Group();
+    const q0Pos = states.find(s => s.id === 'q0').position;
     const startArrow = new THREE.ArrowHelper(
       new THREE.Vector3(1, 0, 0).normalize(),
-      new THREE.Vector3(-3, 0, 0),
-      1.5,
-      0x2ec4b6,
-      0.4,
-      0.3
+      new THREE.Vector3(q0Pos.x - 2.5, q0Pos.y, q0Pos.z),
+      1.8,
+      0x667eea,
+      0.5,
+      0.35
     );
     startArrowGroup.add(startArrow);
     scene.add(startArrowGroup);
@@ -189,8 +271,9 @@ const FA3DVisualization = () => {
     const animate = () => {
       animationId = requestAnimationFrame(animate);
       
-      // Rotate the state group slowly
-      stateGroup.rotation.y += 0.005;
+      // Rotate the entire scene slowly for visual appeal
+      stateGroup.rotation.y += 0.003;
+      transitionGroup.rotation.y += 0.003;
       
       controls.update();
       renderer.render(scene, camera);
