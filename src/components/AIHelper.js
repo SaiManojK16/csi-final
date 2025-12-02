@@ -214,6 +214,16 @@ ${problemExamples.map(ex =>
     }
   }, [isOpen]);
 
+  // Calculate available viewport height (viewport - test panel)
+  const availableHeight = typeof window !== 'undefined' 
+    ? window.innerHeight - Math.max(testPanelHeight, 0)
+    : '100vh';
+  
+  // Calculate center position in available space
+  const centerTop = testPanelHeight > 0
+    ? `calc((100vh - ${testPanelHeight}px) / 2 - 50%)`
+    : '50%';
+
   return (
     <>
       {isOpen && (
@@ -224,17 +234,22 @@ ${problemExamples.map(ex =>
           aria-label="AI Assistant"
           style={{ 
             '--ai-helper-offset': `${Math.max(testPanelHeight, 0)}px`,
-            // Adjust alignment when test panel is visible
-            alignItems: testPanelHeight > 0 ? 'flex-start' : 'center',
-            paddingTop: testPanelHeight > 0 
-              ? `calc(50vh - ${Math.min(350, testPanelHeight / 2)}px)` 
-              : 'clamp(24px, 4vh, 48px)'
+            paddingBottom: `${Math.max(testPanelHeight, 0) + 24}px`
           }}
           onClick={onClose}
         >
           <div
             className="ai-helper-panel"
             onClick={(event) => event.stopPropagation()}
+            style={{
+              position: 'absolute',
+              top: centerTop,
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              maxHeight: testPanelHeight > 0 
+                ? `calc(100vh - ${testPanelHeight}px - 96px)`
+                : 'min(85vh, 700px)'
+            }}
           >
             <div className="ai-helper-header">
               <div className="ai-helper-title">
