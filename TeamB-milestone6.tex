@@ -248,13 +248,44 @@ For testing purposes, please use the following test account:
     \end{itemize}
 \end{enumerate}
 
+\subsubsection{Performance Notice}
+
+\textbf{Important:} This application is deployed on free tiers of Vercel (frontend) and Render (backend). You may experience some delays when logging in or using certain functionalities, especially on first access. We have optimized the application as much as possible within the constraints of free hosting.
+
+\textbf{Reasons for Potential Delays:}
+\begin{enumerate}
+    \item \textbf{Cold Start Times:} Free-tier services often "spin down" inactive applications to conserve resources. When the backend hasn't been accessed for a period (typically 15-30 minutes), it needs to "wake up" or "cold start," which can take 10-30 seconds. This is most noticeable on the first login or API call after inactivity.
+    
+    \item \textbf{Resource Limitations:} Free tiers have limited CPU and memory resources. During peak usage or when processing complex operations (like AI API calls to Google Gemini), response times may be slower than paid tiers. The backend may need to queue requests or process them sequentially.
+    
+    \item \textbf{Network Latency:} Free-tier hosting may use shared infrastructure with higher latency. Additionally, the application makes multiple API calls (authentication, problem data, progress tracking, AI services) which can compound delay, especially when the backend is cold-starting.
+\end{enumerate}
+
+\textbf{What We've Done to Optimize:}
+\begin{itemize}
+    \item Implemented efficient database queries and caching strategies
+    \item Optimized API endpoints to reduce response times
+    \item Minimized frontend bundle size for faster loading
+    \item Used connection pooling for database operations
+    \item Implemented request batching where possible
+\end{itemize}
+
+\textbf{Recommendations:}
+\begin{itemize}
+    \item If you experience delays, wait 10-30 seconds and try again (especially on first access)
+    \item Refresh the page if a request seems to hang
+    \item For best experience, access during active usage periods when services are already "warmed up"
+    \item Be patient with the first login or API call after a period of inactivity
+\end{itemize}
+
 \subsubsection{Troubleshooting}
 
 \begin{itemize}
-    \item If the frontend shows connection errors, check that the backend is running
+    \item If the frontend shows connection errors, check that the backend is running and wait for cold start (10-30 seconds)
     \item Clear browser cache if you see stale content
     \item Use Chrome or Firefox for best compatibility
     \item Ensure JavaScript is enabled
+    \item If experiencing delays, wait a moment and retry (free-tier services may need time to wake up)
 \end{itemize}
 
 \subsection{Notes for Instructor}
@@ -265,6 +296,7 @@ For testing purposes, please use the following test account:
     \item Mobile responsive but optimized for desktop experience
     \item All user data is stored in MongoDB Atlas
     \item AI features require valid Google Gemini API key (configured in production)
+    \item \textbf{Performance:} Due to free-tier hosting (Vercel and Render), you may experience 10-30 second delays on first access or after periods of inactivity. This is normal for free-tier services and we have optimized the application as much as possible within these constraints.
 \end{itemize}
 
 \subsection{Contact Information}
