@@ -13,13 +13,13 @@ const InteractiveFAPlayground = () => {
   const canvasRef = useRef(null);
   const STATE_RADIUS = 28;
 
-  // Example FA: Accepts strings ending in "01" 
-  // Language: All binary strings that end with "01"
-  // Examples: 01, 001, 101, 1001, 0001, etc.
+  // Example FA: Accepts strings ending in "00" 
+  // Language: All binary strings that end with "00"
+  // Examples: 00, 100, 000, 1100, 1000, etc.
   // State meanings:
-  // q0: haven't seen the pattern "01" yet (or just saw '1')
-  // q1: last symbol was '0' (potential start of "01")
-  // q2: last two symbols were "01" (accepting state)
+  // q0: haven't seen the pattern "00" yet (or just saw '1')
+  // q1: last symbol was '0' (potential start of "00")
+  // q2: last two symbols were "00" (accepting state)
   const fa = {
     states: {
       q0: { x: 150, y: 200, isAccepting: false, isStart: true, label: 'q₀' },
@@ -28,16 +28,16 @@ const InteractiveFAPlayground = () => {
     },
     transitions: [
       // From q0: haven't seen pattern yet
-      { from: 'q0', to: 'q1', symbol: '0', type: 'normal' }, // Saw '0', might be start of "01"
+      { from: 'q0', to: 'q1', symbol: '0', type: 'normal' }, // Saw '0', might be start of "00"
       { from: 'q0', to: 'q0', symbol: '1', type: 'self' },    // Saw '1', still haven't seen pattern
       
       // From q1: last symbol was '0'
-      { from: 'q1', to: 'q1', symbol: '0', type: 'self' },   // Another '0', still waiting for '1'
-      { from: 'q1', to: 'q2', symbol: '1', type: 'normal' },  // Saw '1' after '0' = pattern "01" found!
+      { from: 'q1', to: 'q2', symbol: '0', type: 'normal' },  // Saw another '0' = pattern "00" found!
+      { from: 'q1', to: 'q0', symbol: '1', type: 'normal' },   // Saw '1', pattern broken, reset
       
-      // From q2: last two symbols were "01" (accepting state)
-      { from: 'q2', to: 'q1', symbol: '0', type: 'normal' }, // New '0' after "01", might start new "01"
-      { from: 'q2', to: 'q0', symbol: '1', type: 'normal' }  // '1' after "01", pattern broken, reset
+      // From q2: last two symbols were "00" (accepting state)
+      { from: 'q2', to: 'q2', symbol: '0', type: 'self' },  // Another '0', still ending with "00"
+      { from: 'q2', to: 'q0', symbol: '1', type: 'normal' }  // '1' after "00", pattern broken, reset
     ],
     alphabet: ['0', '1']
   };
@@ -366,7 +366,7 @@ const InteractiveFAPlayground = () => {
         <div className="fa-visualization">
           <div className="viz-header">
             <h3>Finite Automaton</h3>
-            <span className="viz-description">Accepts strings ending in "01"</span>
+            <span className="viz-description">Accepts strings ending in "00"</span>
           </div>
           <canvas ref={canvasRef} className="fa-canvas" />
           <div className="state-legend">
@@ -412,7 +412,7 @@ const InteractiveFAPlayground = () => {
               setCurrentIndex(-1);
               setPath(['q0']);
             }}
-            placeholder="Enter string (e.g., 01, 101, 1001)"
+            placeholder="Enter string (e.g., 00, 100, 1100)"
             className="string-input"
             disabled={isProcessing}
             maxLength={20}
@@ -420,17 +420,17 @@ const InteractiveFAPlayground = () => {
 
           <div className="example-buttons">
             <span className="example-label">Try examples:</span>
-            <button onClick={() => handleExampleClick('01')} className="example-btn">
-              01
+            <button onClick={() => handleExampleClick('00')} className="example-btn">
+              00
+            </button>
+            <button onClick={() => handleExampleClick('100')} className="example-btn">
+              100
+            </button>
+            <button onClick={() => handleExampleClick('1100')} className="example-btn">
+              1100
             </button>
             <button onClick={() => handleExampleClick('101')} className="example-btn">
               101
-            </button>
-            <button onClick={() => handleExampleClick('1001')} className="example-btn">
-              1001
-            </button>
-            <button onClick={() => handleExampleClick('0011')} className="example-btn">
-              0011
             </button>
           </div>
 
@@ -468,8 +468,8 @@ const InteractiveFAPlayground = () => {
                 </div>
                 <div className="result-message">
                   {result === 'accepted'
-                    ? 'The string ends with "01"'
-                    : 'The string does not end with "01"'}
+                    ? 'The string ends with "00"'
+                    : 'The string does not end with "00"'}
                 </div>
                 <div className="result-path">
                   Path: {path.join(' → ')}
