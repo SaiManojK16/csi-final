@@ -894,7 +894,6 @@
     padding: clamp(10px, 1.8vh, 12px) clamp(12px, 3vw, 16px);
     font-size: clamp(13px, 2vw, 14px);
   }
-}
 
   .tour-header,
   .tour-body,
