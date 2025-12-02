@@ -36,33 +36,38 @@ const FA3DVisualization = () => {
     controls.maxDistance = 15;
     controlsRef.current = controls;
 
-    // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    // Enhanced lighting setup
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
     scene.add(ambientLight);
 
-    const directionalLight1 = new THREE.DirectionalLight(0xffd166, 0.9);
-    directionalLight1.position.set(5, 8, 5);
+    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight1.position.set(5, 10, 5);
     scene.add(directionalLight1);
 
-    const directionalLight2 = new THREE.DirectionalLight(0x2ec4b6, 0.6);
-    directionalLight2.position.set(-5, 3, -5);
+    const directionalLight2 = new THREE.DirectionalLight(0x4ecdc4, 0.7);
+    directionalLight2.position.set(-5, 5, -5);
     scene.add(directionalLight2);
 
-    const pointLight = new THREE.PointLight(0xff8a65, 0.5, 100);
-    pointLight.position.set(0, 0, 10);
-    scene.add(pointLight);
+    const pointLight1 = new THREE.PointLight(0xff6b6b, 0.8, 50);
+    pointLight1.position.set(0, 0, 8);
+    scene.add(pointLight1);
+
+    const pointLight2 = new THREE.PointLight(0x4ecdc4, 0.6, 50);
+    pointLight2.position.set(-3, -3, 5);
+    scene.add(pointLight2);
 
     // Define FA: 2-state DFA for strings ending with "0"
+    // Arrange in a more interesting 3D layout
     const states = [
       { 
         id: 'q0', 
-        position: new THREE.Vector3(-2, 0, 0), 
+        position: new THREE.Vector3(-2.5, 1, 0), 
         isStart: true, 
         isAccept: false 
       },
       { 
         id: 'q1', 
-        position: new THREE.Vector3(2, 0, 0), 
+        position: new THREE.Vector3(2.5, -1, 0), 
         isStart: false, 
         isAccept: true 
       }
@@ -75,73 +80,110 @@ const FA3DVisualization = () => {
       { from: 'q1', to: 'q0', symbol: '1' }
     ];
 
-    // Create state meshes
+    // Create state meshes with unique geometric shapes
     const stateMeshes = new Map();
     const stateGroup = new THREE.Group();
 
     states.forEach(stateData => {
-      const stateColor = stateData.isAccept ? 0xff8a65 : 0x667eea;
-      const emissiveColor = stateData.isAccept ? 0xff8a65 : 0x667eea;
+      const stateColor = stateData.isAccept ? 0xff6b6b : 0x4ecdc4;
+      const emissiveColor = stateData.isAccept ? 0xff6b6b : 0x4ecdc4;
 
-      // Outer circle for accepting state
-      if (stateData.isAccept) {
-        const outerGeometry = new THREE.TorusGeometry(1.3, 0.1, 16, 32);
-        const outerMaterial = new THREE.MeshPhongMaterial({ 
-          color: 0xff8a65,
-          emissive: 0xff8a65,
-          emissiveIntensity: 0.3,
-          shininess: 80
-        });
-        const outerTorus = new THREE.Mesh(outerGeometry, outerMaterial);
-        outerTorus.rotation.x = Math.PI / 2;
-        outerTorus.position.copy(stateData.position);
-        stateGroup.add(outerTorus);
-      }
-
-      // Main state sphere with gradient effect
-      const geometry = new THREE.SphereGeometry(1.1, 32, 32);
+      // Use octahedron for more interesting shape
+      const geometry = new THREE.OctahedronGeometry(1.2, 0);
       const material = new THREE.MeshPhongMaterial({ 
         color: stateColor,
         emissive: emissiveColor,
-        emissiveIntensity: 0.2,
-        shininess: 120,
-        specular: 0xffffff
+        emissiveIntensity: 0.3,
+        shininess: 150,
+        specular: 0xffffff,
+        flatShading: false
       });
       const stateMesh = new THREE.Mesh(geometry, material);
       stateMesh.position.copy(stateData.position);
       stateGroup.add(stateMesh);
 
-      // Add glow effect
-      const glowGeometry = new THREE.SphereGeometry(1.2, 32, 32);
-      const glowMaterial = new THREE.MeshBasicMaterial({ 
+      // Add rotating ring around state
+      const ringGeometry = new THREE.TorusGeometry(1.5, 0.06, 8, 32);
+      const ringMaterial = new THREE.MeshPhongMaterial({ 
         color: emissiveColor,
+        emissive: emissiveColor,
+        emissiveIntensity: 0.4,
         transparent: true,
-        opacity: 0.2
+        opacity: 0.7
       });
-      const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial);
-      glowMesh.position.copy(stateData.position);
-      stateGroup.add(glowMesh);
+      const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+      ring.rotation.x = Math.PI / 2;
+      ring.position.copy(stateData.position);
+      stateGroup.add(ring);
 
-      // State label
+      // Outer torus for accepting state
+      if (stateData.isAccept) {
+        const outerTorusGeometry = new THREE.TorusGeometry(1.7, 0.08, 8, 32);
+        const outerTorusMaterial = new THREE.MeshPhongMaterial({ 
+          color: 0xff6b6b,
+          emissive: 0xff6b6b,
+          emissiveIntensity: 0.5,
+          transparent: true,
+          opacity: 0.6
+        });
+        const outerTorus = new THREE.Mesh(outerTorusGeometry, outerTorusMaterial);
+        outerTorus.rotation.x = Math.PI / 2;
+        outerTorus.position.copy(stateData.position);
+        stateGroup.add(outerTorus);
+      }
+
+      // Add particle effect around state
+      const particlesGeometry = new THREE.BufferGeometry();
+      const particlesCount = 20;
+      const positions = new Float32Array(particlesCount * 3);
+      
+      for (let i = 0; i < particlesCount * 3; i += 3) {
+        const radius = 1.8;
+        const theta = (i / 3) * (Math.PI * 2 / particlesCount);
+        positions[i] = Math.cos(theta) * radius;
+        positions[i + 1] = Math.sin(theta) * radius;
+        positions[i + 2] = (Math.random() - 0.5) * 0.5;
+      }
+      
+      particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const particlesMaterial = new THREE.PointsMaterial({
+        color: emissiveColor,
+        size: 0.15,
+        transparent: true,
+        opacity: 0.6
+      });
+      const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+      particles.position.copy(stateData.position);
+      stateGroup.add(particles);
+
+      // State label with better styling
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d');
-      canvas.width = 256;
-      canvas.height = 256;
+      canvas.width = 512;
+      canvas.height = 512;
       context.fillStyle = '#ffffff';
-      context.font = 'Bold 140px Arial';
+      context.strokeStyle = '#1f2a44';
+      context.lineWidth = 8;
+      context.font = 'Bold 200px Arial';
       context.textAlign = 'center';
       context.textBaseline = 'middle';
-      context.fillText(stateData.id === 'q0' ? 'q₀' : 'q₁', 128, 128);
+      context.strokeText(stateData.id === 'q0' ? 'q₀' : 'q₁', 256, 256);
+      context.fillText(stateData.id === 'q0' ? 'q₀' : 'q₁', 256, 256);
       
       const texture = new THREE.CanvasTexture(canvas);
       const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
       const sprite = new THREE.Sprite(spriteMaterial);
-      sprite.scale.set(1.8, 1.8, 1);
+      sprite.scale.set(2, 2, 1);
       sprite.position.copy(stateData.position);
-      sprite.position.y += 1.6;
+      sprite.position.y += 2;
       stateGroup.add(sprite);
 
-      stateMeshes.set(stateData.id, { mesh: stateMesh, group: stateGroup });
+      stateMeshes.set(stateData.id, { 
+        mesh: stateMesh, 
+        ring: ring,
+        particles: particles,
+        group: stateGroup 
+      });
     });
 
     scene.add(stateGroup);
@@ -271,9 +313,32 @@ const FA3DVisualization = () => {
     const animate = () => {
       animationId = requestAnimationFrame(animate);
       
-      // Rotate the entire scene slowly for visual appeal
-      stateGroup.rotation.y += 0.003;
-      transitionGroup.rotation.y += 0.003;
+      // Animate states with rotation and floating effect
+      states.forEach((stateData, index) => {
+        const stateObj = stateMeshes.get(stateData.id);
+        if (stateObj) {
+          // Rotate the octahedron
+          stateObj.mesh.rotation.x += 0.01;
+          stateObj.mesh.rotation.y += 0.015;
+          
+          // Rotate the ring
+          if (stateObj.ring) {
+            stateObj.ring.rotation.z += 0.02;
+          }
+          
+          // Floating animation
+          const time = Date.now() * 0.001;
+          stateObj.mesh.position.y = stateData.position.y + Math.sin(time + index) * 0.2;
+          
+          // Rotate particles
+          if (stateObj.particles) {
+            stateObj.particles.rotation.y += 0.01;
+          }
+        }
+      });
+      
+      // Rotate transition group slowly
+      transitionGroup.rotation.y += 0.002;
       
       controls.update();
       renderer.render(scene, camera);
