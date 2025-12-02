@@ -804,12 +804,31 @@ const FASimulation = () => {
                             className="tutorial-start-btn"
                             onClick={() => {
                               console.log('Start Tutorial clicked, tourRef:', tourRef.current);
-                              if (tourRef.current && tourRef.current.startTour) {
-                                tourRef.current.startTour();
-                                setIsTourActive(true);
-                                setActiveLeftTab('question'); // Switch to question after starting
+                              console.log('tourRef.current.startTour:', tourRef.current?.startTour);
+                              
+                              // Try to start the tour
+                              if (tourRef.current) {
+                                if (typeof tourRef.current.startTour === 'function') {
+                                  try {
+                                    tourRef.current.startTour();
+                                    setIsTourActive(true);
+                                    setActiveLeftTab('question'); // Switch to question after starting
+                                    console.log('Tour started successfully');
+                                  } catch (error) {
+                                    console.error('Error starting tour:', error);
+                                    alert('Failed to start tutorial. Please try again.');
+                                  }
+                                } else {
+                                  console.warn('startTour is not a function:', typeof tourRef.current.startTour);
+                                  // Try alternative: dispatch event
+                                  const event = new CustomEvent('startTour');
+                                  window.dispatchEvent(event);
+                                }
                               } else {
-                                console.warn('Tour ref not available or startTour method missing');
+                                console.warn('Tour ref not available');
+                                // Try alternative: dispatch event
+                                const event = new CustomEvent('startTour');
+                                window.dispatchEvent(event);
                               }
                             }}
                           >

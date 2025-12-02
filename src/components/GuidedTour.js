@@ -75,6 +75,25 @@ export const GuidedTour = ({
     }
   }, [storageKey, showWelcome, isActive]);
 
+  // Listen for startTour custom event as fallback
+  useEffect(() => {
+    const handleStartTour = () => {
+      console.log('startTour event received');
+      if (!isActive) {
+        setIsActive(true);
+        setShowWelcomeModal(false);
+        setCurrentStep(0);
+        if (externalCompletedTasks === undefined) {
+          setInternalCompletedTasks(new Set());
+        }
+        localStorage.removeItem(storageKey);
+      }
+    };
+    
+    window.addEventListener('startTour', handleStartTour);
+    return () => window.removeEventListener('startTour', handleStartTour);
+  }, [isActive, externalCompletedTasks, storageKey]);
+
   // Store refs to elements we've modified for cleanup
   const modifiedElementsRef = useRef([]);
   
