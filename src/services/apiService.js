@@ -147,6 +147,13 @@ class APIService {
     return await this.request('/auth/me');
   }
 
+  async checkEmail(email) {
+    return await this.request('/auth/check-email', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  }
+
   async resetPassword(email) {
     return await this.request('/auth/reset-password', {
       method: 'POST',

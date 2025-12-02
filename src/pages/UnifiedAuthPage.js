@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import apiService from '../services/apiService';
 import './UnifiedAuthPage.css';
 
 const UnifiedAuthPage = () => {
@@ -29,13 +30,7 @@ const UnifiedAuthPage = () => {
 
     try {
       // Check if email exists in the system
-      const response = await fetch('http://localhost:5001/api/auth/check-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      });
-
-      const data = await response.json();
+      const data = await apiService.checkEmail(email);
 
       if (data.exists) {
         // Email exists - show sign in form
@@ -45,7 +40,7 @@ const UnifiedAuthPage = () => {
         setStep('signup');
       }
     } catch (err) {
-      setError('Unable to connect to server. Please try again.');
+      setError(err.message || 'Unable to connect to server. Please try again.');
     } finally {
       setLoading(false);
     }
