@@ -507,9 +507,22 @@ const FASimulation = () => {
       {/* LeetCode Style Header - Problem Navigation */}
       <div className="fa-header-leetcode">
         <div className="fa-header-left">
-          <Link to="/" className="header-logo">
+          <button 
+            onClick={() => navigate('/')}
+            className="header-logo"
+            style={{ 
+              background: 'none', 
+              border: 'none', 
+              cursor: 'pointer',
+              padding: '4px 8px',
+              borderRadius: '4px',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#f5f5f5'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+          >
             <span className="logo-text">Acceptly</span>
-          </Link>
+          </button>
           <div className="header-navigation">
             <button 
               className="nav-arrow-btn"
