@@ -275,7 +275,7 @@ const FASimulation = () => {
         navigationCounterRef.current += 1;
         const timestamp = Date.now();
         navigate(`/practice/fa/${prevProblem.id}`, { 
-          replace: true,
+          replace: false, // Use false to allow proper navigation
           state: { 
             fromNavigation: true, 
             timestamp, 
@@ -297,7 +297,7 @@ const FASimulation = () => {
         navigationCounterRef.current += 1;
         const timestamp = Date.now();
         navigate(`/practice/fa/${nextProblem.id}`, { 
-          replace: true,
+          replace: false, // Use false to allow proper navigation
           state: { 
             fromNavigation: true, 
             timestamp, 
@@ -319,7 +319,7 @@ const FASimulation = () => {
       navigationCounterRef.current += 1;
       const timestamp = Date.now();
       navigate(`/practice/fa/${randomProblem.id}`, { 
-        replace: true,
+        replace: false, // Use false to allow proper navigation
         state: { 
           fromNavigation: true, 
           timestamp, 
