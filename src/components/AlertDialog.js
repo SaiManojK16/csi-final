@@ -184,11 +184,17 @@ export const AlertDialogCancel = ({
   className = '',
   ...props 
 }) => {
+  const handleClick = (e) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    onClick?.(e);
+  };
+  
   return (
     <button
       type="button"
       className={`alert-dialog-action alert-dialog-cancel ${className}`}
-      onClick={onClick}
+      onClick={handleClick}
       {...props}
     >
       {children}
@@ -210,11 +216,17 @@ export const AlertDialogAction = ({
 }) => {
   const variantClass = `alert-dialog-action-${variant}`;
   
+  const handleClick = (e) => {
+    e?.preventDefault();
+    e?.stopPropagation();
+    onClick?.(e);
+  };
+  
   return (
     <button
       type="button"
       className={`alert-dialog-action ${variantClass} ${className}`}
-      onClick={onClick}
+      onClick={handleClick}
       disabled={loading}
       {...props}
     >

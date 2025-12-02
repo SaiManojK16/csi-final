@@ -29,9 +29,11 @@ const Header = () => {
     setLogoutDialogOpen(true);
   };
 
-  const handleConfirmLogout = () => {
-    logout();
+  const handleConfirmLogout = (e) => {
+    e?.preventDefault();
+    e?.stopPropagation();
     setLogoutDialogOpen(false);
+    logout();
     navigate('/');
   };
 
@@ -207,7 +209,15 @@ const Header = () => {
       </div>
 
       {/* Logout Confirmation Dialog */}
-      <AlertDialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen} variant="warning">
+      <AlertDialog 
+        open={logoutDialogOpen} 
+        onOpenChange={(open) => {
+          if (!open) {
+            setLogoutDialogOpen(false);
+          }
+        }} 
+        variant="warning"
+      >
         <AlertDialogHeader>
           <AlertDialogTitle>Logout?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -215,10 +225,18 @@ const Header = () => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => setLogoutDialogOpen(false)}>
+          <AlertDialogCancel onClick={(e) => {
+            e?.preventDefault();
+            e?.stopPropagation();
+            setLogoutDialogOpen(false);
+          }}>
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction variant="primary" onClick={handleConfirmLogout}>
+          <AlertDialogAction 
+            variant="primary" 
+            onClick={handleConfirmLogout}
+            type="button"
+          >
             Logout
           </AlertDialogAction>
         </AlertDialogFooter>
