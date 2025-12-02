@@ -69,74 +69,49 @@ const LandingPage = () => {
               <div className="geometric-shape shape-3"></div>
               <div className="hero-3d-image-wrapper">
                 <svg 
-                  viewBox="0 0 600 400" 
+                  viewBox="0 0 500 300" 
                   className="hero-3d-image"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  {/* Background gradient */}
                   <defs>
-                    <linearGradient id="faGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" style={{stopColor: 'rgba(46, 196, 182, 0.1)', stopOpacity: 1}} />
-                      <stop offset="100%" style={{stopColor: 'rgba(255, 209, 102, 0.1)', stopOpacity: 1}} />
+                    <linearGradient id="stateGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style={{stopColor: '#2ec4b6', stopOpacity: 1}} />
+                      <stop offset="100%" style={{stopColor: '#1a9d8f', stopOpacity: 1}} />
                     </linearGradient>
-                    <filter id="glow">
-                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                      <feMerge>
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                      </feMerge>
-                    </filter>
-                  </defs>
-                  
-                  {/* Start arrow */}
-                  <line x1="50" y1="200" x2="100" y2="200" stroke="#2ec4b6" strokeWidth="3" markerEnd="url(#arrowhead)"/>
-                  <text x="30" y="205" fill="#1f2a44" fontSize="14" fontWeight="600">Start</text>
-                  
-                  {/* State q0 (start state) */}
-                  <circle cx="150" cy="200" r="35" fill="#2ec4b6" stroke="#1f2a44" strokeWidth="3" filter="url(#glow)"/>
-                  <text x="150" y="207" textAnchor="middle" fill="#ffffff" fontSize="18" fontWeight="700">q₀</text>
-                  
-                  {/* Transition q0 -> q1 on '0' */}
-                  <path d="M 185 200 Q 250 150 300 150" fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrowhead)"/>
-                  <text x="240" y="165" fill="#1f2a44" fontSize="16" fontWeight="600">0</text>
-                  
-                  {/* State q1 */}
-                  <circle cx="350" cy="150" r="35" fill="#2ec4b6" stroke="#1f2a44" strokeWidth="3" filter="url(#glow)"/>
-                  <text x="350" y="157" textAnchor="middle" fill="#ffffff" fontSize="18" fontWeight="700">q₁</text>
-                  
-                  {/* Self-loop on q1 for '0' */}
-                  <path d="M 350 115 Q 390 115 390 150 Q 390 185 350 185 Q 310 185 310 150 Q 310 115 350 115" 
-                        fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrowhead)"/>
-                  <text x="390" y="130" fill="#1f2a44" fontSize="16" fontWeight="600">0</text>
-                  
-                  {/* Transition q1 -> q2 on '1' */}
-                  <path d="M 350 185 Q 400 220 450 250" fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrowhead)"/>
-                  <text x="400" y="210" fill="#1f2a44" fontSize="16" fontWeight="600">1</text>
-                  
-                  {/* State q2 (accepting state - double circle) */}
-                  <circle cx="500" cy="250" r="45" fill="none" stroke="#1f2a44" strokeWidth="2" opacity="0.6"/>
-                  <circle cx="500" cy="250" r="35" fill="#2ec4b6" stroke="#1f2a44" strokeWidth="3" filter="url(#glow)"/>
-                  <text x="500" y="257" textAnchor="middle" fill="#ffffff" fontSize="18" fontWeight="700">q₂</text>
-                  
-                  {/* Transition q2 -> q1 on '0' */}
-                  <path d="M 465 240 Q 400 200 385 185" fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrowhead)"/>
-                  <text x="420" y="210" fill="#1f2a44" fontSize="16" fontWeight="600">0</text>
-                  
-                  {/* Transition q2 -> q0 on '1' */}
-                  <path d="M 500 295 Q 400 280 200 280 Q 150 280 150 235" fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrowhead)"/>
-                  <text x="300" y="290" fill="#1f2a44" fontSize="16" fontWeight="600">1</text>
-                  
-                  {/* Self-loop on q0 for '1' */}
-                  <path d="M 150 165 Q 110 165 110 200 Q 110 235 150 235 Q 190 235 190 200 Q 190 165 150 165" 
-                        fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrowhead)"/>
-                  <text x="110" y="185" fill="#1f2a44" fontSize="16" fontWeight="600">1</text>
-                  
-                  {/* Arrow marker definition */}
-                  <defs>
-                    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
                       <polygon points="0 0, 10 3, 0 6" fill="#1f2a44" />
                     </marker>
                   </defs>
+                  
+                  {/* Start arrow */}
+                  <line x1="40" y1="150" x2="90" y2="150" stroke="#2ec4b6" strokeWidth="2.5" markerEnd="url(#arrow)"/>
+                  
+                  {/* State q0 (start, non-accepting) */}
+                  <circle cx="150" cy="150" r="40" fill="url(#stateGradient)" stroke="#1f2a44" strokeWidth="3"/>
+                  <text x="150" y="158" textAnchor="middle" fill="#ffffff" fontSize="20" fontWeight="700">q₀</text>
+                  
+                  {/* Self-loop on q0 for '1' */}
+                  <path d="M 150 110 Q 110 110 110 150 Q 110 190 150 190 Q 190 190 190 150 Q 190 110 150 110" 
+                        fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrow)"/>
+                  <text x="110" y="130" fill="#1f2a44" fontSize="18" fontWeight="600">1</text>
+                  
+                  {/* Transition q0 -> q1 on '0' */}
+                  <line x1="190" y1="150" x2="310" y2="150" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrow)"/>
+                  <text x="250" y="140" fill="#1f2a44" fontSize="18" fontWeight="600">0</text>
+                  
+                  {/* State q1 (accepting - double circle) */}
+                  <circle cx="350" cy="150" r="48" fill="none" stroke="#1f2a44" strokeWidth="2" opacity="0.4"/>
+                  <circle cx="350" cy="150" r="40" fill="url(#stateGradient)" stroke="#1f2a44" strokeWidth="3"/>
+                  <text x="350" y="158" textAnchor="middle" fill="#ffffff" fontSize="20" fontWeight="700">q₁</text>
+                  
+                  {/* Self-loop on q1 for '0' */}
+                  <path d="M 350 110 Q 390 110 390 150 Q 390 190 350 190 Q 310 190 310 150 Q 310 110 350 110" 
+                        fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrow)"/>
+                  <text x="390" y="130" fill="#1f2a44" fontSize="18" fontWeight="600">0</text>
+                  
+                  {/* Transition q1 -> q0 on '1' */}
+                  <path d="M 310 150 Q 250 120 190 150" fill="none" stroke="#1f2a44" strokeWidth="2.5" markerEnd="url(#arrow)"/>
+                  <text x="250" y="125" fill="#1f2a44" fontSize="18" fontWeight="600">1</text>
                 </svg>
               </div>
             </div>
