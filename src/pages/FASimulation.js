@@ -273,15 +273,7 @@ const FASimulation = () => {
     if (currentProblemIndex > 0 && currentProblemIndex <= allProblems.length) {
       const prevProblem = allProblems[currentProblemIndex - 1];
       if (prevProblem && prevProblem.id && prevProblem.id !== problemId) {
-        // Use window.location for immediate navigation if React Router isn't working
-        const newPath = `/practice/fa/${prevProblem.id}`;
-        navigate(newPath, { replace: false });
-        // Force immediate navigation as fallback
-        setTimeout(() => {
-          if (window.location.pathname !== newPath) {
-            window.location.href = newPath;
-          }
-        }, 100);
+        navigate(`/practice/fa/${prevProblem.id}`, { replace: false });
       }
     }
   }, [navigate, allProblems, currentProblemIndex, problemId]);
@@ -292,15 +284,7 @@ const FASimulation = () => {
     if (currentProblemIndex >= 0 && currentProblemIndex < allProblems.length - 1) {
       const nextProblem = allProblems[currentProblemIndex + 1];
       if (nextProblem && nextProblem.id && nextProblem.id !== problemId) {
-        // Use window.location for immediate navigation if React Router isn't working
-        const newPath = `/practice/fa/${nextProblem.id}`;
-        navigate(newPath, { replace: false });
-        // Force immediate navigation as fallback
-        setTimeout(() => {
-          if (window.location.pathname !== newPath) {
-            window.location.href = newPath;
-          }
-        }, 100);
+        navigate(`/practice/fa/${nextProblem.id}`, { replace: false });
       }
     }
   }, [navigate, allProblems, currentProblemIndex, problemId]);
@@ -311,15 +295,7 @@ const FASimulation = () => {
     const randomIndex = Math.floor(Math.random() * allProblems.length);
     const randomProblem = allProblems[randomIndex];
     if (randomProblem && randomProblem.id !== problemId) {
-      // Use window.location for immediate navigation if React Router isn't working
-      const newPath = `/practice/fa/${randomProblem.id}`;
-      navigate(newPath, { replace: false });
-      // Force immediate navigation as fallback
-      setTimeout(() => {
-        if (window.location.pathname !== newPath) {
-          window.location.href = newPath;
-        }
-      }, 100);
+      navigate(`/practice/fa/${randomProblem.id}`, { replace: false });
     }
   }, [navigate, allProblems, problemId]);
 
@@ -504,12 +480,6 @@ const FASimulation = () => {
               e?.preventDefault();
               e?.stopPropagation();
               navigate('/');
-              // Force immediate navigation as fallback
-              setTimeout(() => {
-                if (window.location.pathname !== '/') {
-                  window.location.href = '/';
-                }
-              }, 100);
             }}
             className="header-logo"
             style={{ 
