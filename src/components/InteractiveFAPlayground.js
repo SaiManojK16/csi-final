@@ -33,6 +33,7 @@ const InteractiveFAPlayground = () => {
       
       // From q1: last symbol was '0'
       { from: 'q1', to: 'q1', symbol: '0', type: 'self' },   // Another '0', still waiting for '1'
+      // CRITICAL: q1->q2 transition MUST be '1' (NOT '0')
       { from: 'q1', to: 'q2', symbol: '1', type: 'normal' },  // Saw '1' after '0' = pattern "01" found!
       
       // From q2: last two symbols were "01" (accepting state)
@@ -41,6 +42,19 @@ const InteractiveFAPlayground = () => {
     ],
     alphabet: ['0', '1']
   };
+
+  // Verify transitions on mount
+  useEffect(() => {
+    const q1ToQ2 = fa.transitions.find(t => t.from === 'q1' && t.to === 'q2');
+    if (q1ToQ2) {
+      console.log('🔍 Playground FA - q1->q2 transition symbol:', q1ToQ2.symbol);
+      if (q1ToQ2.symbol !== '1') {
+        console.error('❌ ERROR: q1->q2 transition should be "1" but is:', q1ToQ2.symbol);
+      } else {
+        console.log('✅ Verified: q1->q2 transition is correctly set to "1"');
+      }
+    }
+  }, []);
 
   // Prepare responsive canvas sizing
   useEffect(() => {
@@ -139,6 +153,11 @@ const InteractiveFAPlayground = () => {
     fa.transitions.forEach(transition => {
       const fromState = fa.states[transition.from];
       const toState = fa.states[transition.to];
+      
+      // Debug: Log q1->q2 transition
+      if (transition.from === 'q1' && transition.to === 'q2') {
+        console.log('🔍 q1->q2 transition:', transition.symbol, transition);
+      }
       
       // Check if this transition is active
       const isActive = activeTransition && 
