@@ -58,60 +58,93 @@ const LandingPage = () => {
           </div>
 
           <div className="hero-visual">
-            <div className="hero-clipart">
-              <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-                {/* Student figure */}
-                <g id="student">
-                  {/* Head */}
-                  <circle cx="200" cy="120" r="35" fill="#ffd166" stroke="#1f2a44" strokeWidth="2"/>
-                  {/* Hair */}
-                  <path d="M 170 100 Q 200 80 230 100 Q 240 90 230 110 Q 200 95 170 110 Z" fill="#1f2a44"/>
-                  {/* Body */}
-                  <rect x="180" y="155" width="40" height="80" rx="5" fill="#667eea" stroke="#1f2a44" strokeWidth="2"/>
-                  {/* Arms */}
-                  <ellipse cx="165" cy="190" rx="8" ry="25" fill="#ffd166" stroke="#1f2a44" strokeWidth="2"/>
-                  <ellipse cx="235" cy="190" rx="8" ry="25" fill="#ffd166" stroke="#1f2a44" strokeWidth="2"/>
-                  {/* Legs */}
-                  <rect x="185" y="235" width="12" height="50" rx="3" fill="#2ec4b6" stroke="#1f2a44" strokeWidth="2"/>
-                  <rect x="203" y="235" width="12" height="50" rx="3" fill="#2ec4b6" stroke="#1f2a44" strokeWidth="2"/>
-                  {/* Eyes */}
-                  <circle cx="190" cy="115" r="4" fill="#1f2a44"/>
-                  <circle cx="210" cy="115" r="4" fill="#1f2a44"/>
-                  {/* Smile */}
-                  <path d="M 190 130 Q 200 138 210 130" stroke="#1f2a44" strokeWidth="2" fill="none" strokeLinecap="round"/>
+            <div className="hero-illustration">
+              <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style={{stopColor: '#667eea', stopOpacity: 1}} />
+                    <stop offset="100%" style={{stopColor: '#764ba2', stopOpacity: 1}} />
+                  </linearGradient>
+                  <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style={{stopColor: '#ff8a65', stopOpacity: 1}} />
+                    <stop offset="100%" style={{stopColor: '#ff6b6b', stopOpacity: 1}} />
+                  </linearGradient>
+                  <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style={{stopColor: '#2ec4b6', stopOpacity: 1}} />
+                    <stop offset="100%" style={{stopColor: '#4ecdc4', stopOpacity: 1}} />
+                  </linearGradient>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge>
+                      <feMergeNode in="coloredBlur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
+                </defs>
+                
+                {/* Abstract geometric shapes representing states */}
+                <g id="states">
+                  {/* State 1 - Large circle */}
+                  <circle cx="150" cy="150" r="60" fill="url(#grad1)" opacity="0.9" filter="url(#glow)"/>
+                  <circle cx="150" cy="150" r="50" fill="none" stroke="#fff" strokeWidth="2" opacity="0.6"/>
+                  <text x="150" y="160" textAnchor="middle" fill="#fff" fontSize="28" fontWeight="bold" fontFamily="Arial">q₀</text>
+                  
+                  {/* State 2 - Hexagon */}
+                  <g transform="translate(350, 150)">
+                    <polygon points="-40,-30 40,-30 60,0 40,30 -40,30 -60,0" fill="url(#grad2)" opacity="0.9" filter="url(#glow)"/>
+                    <polygon points="-35,-25 35,-25 50,0 35,25 -35,25 -50,0" fill="none" stroke="#fff" strokeWidth="2" opacity="0.6"/>
+                    <text x="0" y="10" textAnchor="middle" fill="#fff" fontSize="24" fontWeight="bold" fontFamily="Arial">q₁</text>
+                  </g>
                 </g>
                 
-                {/* Book/Tablet */}
-                <g id="book" transform="translate(140, 200)">
-                  <rect x="0" y="0" width="60" height="40" rx="3" fill="#fff7f0" stroke="#1f2a44" strokeWidth="2"/>
-                  <line x1="5" y1="15" x2="55" y2="15" stroke="#1f2a44" strokeWidth="1.5"/>
-                  <line x1="5" y1="22" x2="50" y2="22" stroke="#1f2a44" strokeWidth="1.5"/>
-                  <line x1="5" y1="29" x2="45" y2="29" stroke="#1f2a44" strokeWidth="1.5"/>
-                </g>
-                
-                {/* Thought bubble */}
-                <g id="thought">
-                  <circle cx="280" cy="100" r="25" fill="#fff" stroke="#1f2a44" strokeWidth="2"/>
-                  <circle cx="300" cy="85" r="8" fill="#fff" stroke="#1f2a44" strokeWidth="1.5"/>
-                  <circle cx="310" cy="75" r="5" fill="#fff" stroke="#1f2a44" strokeWidth="1"/>
-                  {/* FA symbol in thought */}
-                  <circle cx="280" cy="100" r="12" fill="none" stroke="#667eea" strokeWidth="2"/>
-                  <circle cx="280" cy="100" r="8" fill="none" stroke="#ff8a65" strokeWidth="1.5"/>
-                  <line x1="272" y1="100" x2="288" y2="100" stroke="#1f2a44" strokeWidth="1.5" markerEnd="url(#arrowhead)"/>
+                {/* Transitions - flowing lines */}
+                <g id="transitions">
+                  {/* Curved transition from q0 to q1 */}
+                  <path d="M 210 150 Q 250 100 310 150" fill="none" stroke="url(#grad3)" strokeWidth="4" opacity="0.7" markerEnd="url(#arrowhead)"/>
+                  
+                  {/* Self-loop on q0 */}
+                  <path d="M 150 90 Q 100 60 80 90 Q 100 120 150 90" fill="none" stroke="url(#grad1)" strokeWidth="3" opacity="0.6" markerEnd="url(#arrowhead)"/>
+                  
+                  {/* Self-loop on q1 */}
+                  <path d="M 350 120 Q 400 90 420 120 Q 400 150 350 120" fill="none" stroke="url(#grad2)" strokeWidth="3" opacity="0.6" markerEnd="url(#arrowhead)"/>
                 </g>
                 
                 {/* Arrow marker */}
                 <defs>
-                  <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                    <polygon points="0 0, 10 3, 0 6" fill="#1f2a44"/>
+                  <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <polygon points="0 0, 10 3, 0 6" fill="#2ec4b6"/>
                   </marker>
                 </defs>
                 
-                {/* Stars for learning effect */}
-                <g id="stars">
-                  <path d="M 320 180 L 325 190 L 335 190 L 327 197 L 330 207 L 320 200 L 310 207 L 313 197 L 305 190 L 315 190 Z" fill="#ffd166" opacity="0.8"/>
-                  <path d="M 80 160 L 83 167 L 90 167 L 84 172 L 87 179 L 80 174 L 73 179 L 76 172 L 70 167 L 77 167 Z" fill="#2ec4b6" opacity="0.8"/>
-                  <path d="M 350 250 L 352 255 L 357 255 L 353 258 L 355 263 L 350 260 L 345 263 L 347 258 L 343 255 L 348 255 Z" fill="#ff8a65" opacity="0.8"/>
+                {/* Symbol labels */}
+                <g id="symbols">
+                  <circle cx="250" cy="120" r="20" fill="#fff" stroke="#2ec4b6" strokeWidth="2"/>
+                  <text x="250" y="128" textAnchor="middle" fill="#2ec4b6" fontSize="18" fontWeight="bold" fontFamily="Arial">0</text>
+                  
+                  <circle cx="100" cy="80" r="18" fill="#fff" stroke="#667eea" strokeWidth="2"/>
+                  <text x="100" y="87" textAnchor="middle" fill="#667eea" fontSize="16" fontWeight="bold" fontFamily="Arial">1</text>
+                  
+                  <circle cx="400" cy="110" r="18" fill="#fff" stroke="#ff8a65" strokeWidth="2"/>
+                  <text x="400" y="117" textAnchor="middle" fill="#ff8a65" fontSize="16" fontWeight="bold" fontFamily="Arial">0</text>
+                </g>
+                
+                {/* Start indicator */}
+                <g id="start">
+                  <path d="M 50 150 L 90 150" stroke="#667eea" strokeWidth="3" markerEnd="url(#arrowhead-start)"/>
+                  <circle cx="50" cy="150" r="8" fill="#667eea"/>
+                </g>
+                
+                <defs>
+                  <marker id="arrowhead-start" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <polygon points="0 0, 10 3, 0 6" fill="#667eea"/>
+                  </marker>
+                </defs>
+                
+                {/* Decorative elements - subtle background shapes */}
+                <g id="decorative" opacity="0.1">
+                  <circle cx="100" cy="250" r="40" fill="url(#grad1)"/>
+                  <circle cx="400" cy="250" r="35" fill="url(#grad2)"/>
+                  <circle cx="250" cy="300" r="30" fill="url(#grad3)"/>
                 </g>
               </svg>
             </div>
