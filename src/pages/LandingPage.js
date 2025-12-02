@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import FeatureCardFlip from '../components/FeatureCardFlip';
 import InteractiveFAPlayground from '../components/InteractiveFAPlayground';
+import FA3DVisualization from '../components/FA3DVisualization';
 import './LandingPage.css';
 
 const LandingPage = () => {
@@ -68,42 +69,7 @@ const LandingPage = () => {
               <div className="geometric-shape shape-2"></div>
               <div className="geometric-shape shape-3"></div>
               <div className="hero-3d-image-wrapper">
-                <svg 
-                  viewBox="0 0 400 300" 
-                  className="hero-3d-image"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <defs>
-                    <linearGradient id="stateGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" style={{stopColor: '#2ec4b6', stopOpacity: 1}} />
-                      <stop offset="100%" style={{stopColor: '#1a9d8f', stopOpacity: 1}} />
-                    </linearGradient>
-                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
-                      <polygon points="0 0, 10 3, 0 6" fill="#1f2a44" />
-                    </marker>
-                  </defs>
-                  
-                  {/* Start arrow */}
-                  <line x1="80" y1="150" x2="150" y2="150" stroke="#2ec4b6" strokeWidth="3" markerEnd="url(#arrow)"/>
-                  
-                  {/* Single state q0 (start and accepting) */}
-                  <circle cx="250" cy="150" r="55" fill="none" stroke="#1f2a44" strokeWidth="2.5" opacity="0.5"/>
-                  <circle cx="250" cy="150" r="45" fill="url(#stateGradient)" stroke="#1f2a44" strokeWidth="3"/>
-                  <text x="250" y="160" textAnchor="middle" fill="#ffffff" fontSize="24" fontWeight="700">q₀</text>
-                  
-                  {/* Self-loop for '0' */}
-                  <path d="M 250 95 Q 200 95 200 150 Q 200 205 250 205 Q 300 205 300 150 Q 300 95 250 95" 
-                        fill="none" stroke="#1f2a44" strokeWidth="3" markerEnd="url(#arrow)"/>
-                  <text x="200" y="120" fill="#1f2a44" fontSize="20" fontWeight="700">0</text>
-                  
-                  {/* Self-loop for '1' */}
-                  <path d="M 250 205 Q 300 205 300 150 Q 300 95 250 95 Q 200 95 200 150 Q 200 205 250 205" 
-                        fill="none" stroke="#1f2a44" strokeWidth="3" markerEnd="url(#arrow)"/>
-                  <text x="300" y="120" fill="#1f2a44" fontSize="20" fontWeight="700">1</text>
-                  
-                  {/* Accepting state indicator */}
-                  <text x="250" y="230" textAnchor="middle" fill="#2ec4b6" fontSize="14" fontWeight="600">Accepting State</text>
-                </svg>
+                <FA3DVisualization />
               </div>
             </div>
           </div>
