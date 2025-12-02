@@ -111,8 +111,9 @@ export const GuidedTour = ({
   const modifiedElementsRef = useRef([]);
   
   // Calculate positions when step changes
+  // Skip position calculations if rendering inline (no overlay needed)
   useEffect(() => {
-    if (!isActive || !steps[currentStep]) return;
+    if (renderInline || !isActive || !steps[currentStep]) return;
 
     // Cleanup previous element modifications
     modifiedElementsRef.current.forEach(({ element, originalStyles }) => {
