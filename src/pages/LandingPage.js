@@ -84,57 +84,72 @@ const LandingPage = () => {
                 
                 {/* Abstract geometric shapes representing states */}
                 <g id="states">
-                  {/* State 1 - Circle */}
-                  <circle cx="150" cy="150" r="60" fill="url(#grad1)" opacity="0.9" filter="url(#glow)"/>
-                  <circle cx="150" cy="150" r="50" fill="none" stroke="#fff" strokeWidth="2" opacity="0.6"/>
-                  <text x="150" y="160" textAnchor="middle" fill="#fff" fontSize="28" fontWeight="bold" fontFamily="Arial">q₀</text>
+                  {/* State 1 (q0) - Start state */}
+                  <circle cx="150" cy="200" r="55" fill="url(#grad1)" opacity="0.9" filter="url(#glow)"/>
+                  <circle cx="150" cy="200" r="45" fill="none" stroke="#fff" strokeWidth="2.5" opacity="0.7"/>
+                  <text x="150" y="210" textAnchor="middle" fill="#fff" fontSize="26" fontWeight="bold" fontFamily="Arial">q₀</text>
                   
-                  {/* State 2 - Circle */}
-                  <circle cx="350" cy="150" r="60" fill="url(#grad2)" opacity="0.9" filter="url(#glow)"/>
-                  <circle cx="350" cy="150" r="50" fill="none" stroke="#fff" strokeWidth="2" opacity="0.6"/>
-                  <text x="350" y="160" textAnchor="middle" fill="#fff" fontSize="28" fontWeight="bold" fontFamily="Arial">q₁</text>
+                  {/* State 2 (q1) - Final/Accepting state with double circle */}
+                  <circle cx="350" cy="200" r="55" fill="url(#grad2)" opacity="0.9" filter="url(#glow)"/>
+                  <circle cx="350" cy="200" r="45" fill="none" stroke="#fff" strokeWidth="2.5" opacity="0.7"/>
+                  {/* Outer circle for accepting state */}
+                  <circle cx="350" cy="200" r="65" fill="none" stroke="url(#grad2)" strokeWidth="3" opacity="0.8"/>
+                  <text x="350" y="210" textAnchor="middle" fill="#fff" fontSize="26" fontWeight="bold" fontFamily="Arial">q₁</text>
                 </g>
                 
-                {/* Transitions - flowing lines */}
+                {/* Transitions - improved curves */}
                 <g id="transitions">
-                  {/* Curved transition from q0 to q1 */}
-                  <path d="M 210 150 Q 250 100 310 150" fill="none" stroke="url(#grad3)" strokeWidth="4" opacity="0.7" markerEnd="url(#arrowhead)"/>
+                  {/* Transition from q0 to q1 (symbol: 0) */}
+                  <path d="M 205 200 Q 250 150 295 200" fill="none" stroke="#2ec4b6" strokeWidth="4" opacity="0.8" markerEnd="url(#arrowhead)"/>
                   
-                  {/* Self-loop on q0 */}
-                  <path d="M 150 90 Q 100 60 80 90 Q 100 120 150 90" fill="none" stroke="url(#grad1)" strokeWidth="3" opacity="0.6" markerEnd="url(#arrowhead)"/>
+                  {/* Self-loop on q0 (symbol: 1) */}
+                  <path d="M 150 145 Q 80 120 80 200 Q 80 280 150 255" fill="none" stroke="#667eea" strokeWidth="3.5" opacity="0.7" markerEnd="url(#arrowhead-self)"/>
                   
-                  {/* Self-loop on q1 */}
-                  <path d="M 350 120 Q 400 90 420 120 Q 400 150 350 120" fill="none" stroke="url(#grad2)" strokeWidth="3" opacity="0.6" markerEnd="url(#arrowhead)"/>
+                  {/* Self-loop on q1 (symbol: 0) */}
+                  <path d="M 350 145 Q 420 120 420 200 Q 420 280 350 255" fill="none" stroke="#ff8a65" strokeWidth="3.5" opacity="0.7" markerEnd="url(#arrowhead-self)"/>
+                  
+                  {/* Transition from q1 to q0 (symbol: 1) */}
+                  <path d="M 295 200 Q 250 250 205 200" fill="none" stroke="#2ec4b6" strokeWidth="4" opacity="0.8" markerEnd="url(#arrowhead)"/>
                 </g>
                 
-                {/* Arrow marker */}
+                {/* Arrow markers */}
                 <defs>
-                  <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-                    <polygon points="0 0, 10 3, 0 6" fill="#2ec4b6"/>
+                  <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <polygon points="0 0, 12 4, 0 8" fill="#2ec4b6"/>
+                  </marker>
+                  <marker id="arrowhead-self" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <polygon points="0 0, 12 4, 0 8" fill="#667eea"/>
                   </marker>
                 </defs>
                 
                 {/* Symbol labels */}
                 <g id="symbols">
-                  <circle cx="250" cy="120" r="20" fill="#fff" stroke="#2ec4b6" strokeWidth="2"/>
-                  <text x="250" y="128" textAnchor="middle" fill="#2ec4b6" fontSize="18" fontWeight="bold" fontFamily="Arial">0</text>
+                  {/* Symbol 0 on q0->q1 transition */}
+                  <circle cx="250" cy="160" r="22" fill="#fff" stroke="#2ec4b6" strokeWidth="2.5"/>
+                  <text x="250" y="168" textAnchor="middle" fill="#2ec4b6" fontSize="20" fontWeight="bold" fontFamily="Arial">0</text>
                   
-                  <circle cx="100" cy="80" r="18" fill="#fff" stroke="#667eea" strokeWidth="2"/>
-                  <text x="100" y="87" textAnchor="middle" fill="#667eea" fontSize="16" fontWeight="bold" fontFamily="Arial">1</text>
+                  {/* Symbol 1 on q0 self-loop */}
+                  <circle cx="70" cy="200" r="20" fill="#fff" stroke="#667eea" strokeWidth="2.5"/>
+                  <text x="70" y="208" textAnchor="middle" fill="#667eea" fontSize="18" fontWeight="bold" fontFamily="Arial">1</text>
                   
-                  <circle cx="400" cy="110" r="18" fill="#fff" stroke="#ff8a65" strokeWidth="2"/>
-                  <text x="400" y="117" textAnchor="middle" fill="#ff8a65" fontSize="16" fontWeight="bold" fontFamily="Arial">0</text>
+                  {/* Symbol 0 on q1 self-loop */}
+                  <circle cx="430" cy="200" r="20" fill="#fff" stroke="#ff8a65" strokeWidth="2.5"/>
+                  <text x="430" y="208" textAnchor="middle" fill="#ff8a65" fontSize="18" fontWeight="bold" fontFamily="Arial">0</text>
+                  
+                  {/* Symbol 1 on q1->q0 transition */}
+                  <circle cx="250" cy="240" r="22" fill="#fff" stroke="#2ec4b6" strokeWidth="2.5"/>
+                  <text x="250" y="248" textAnchor="middle" fill="#2ec4b6" fontSize="20" fontWeight="bold" fontFamily="Arial">1</text>
                 </g>
                 
-                {/* Start indicator */}
+                {/* Start indicator - only for q0 */}
                 <g id="start">
-                  <path d="M 50 150 L 90 150" stroke="#667eea" strokeWidth="3" markerEnd="url(#arrowhead-start)"/>
-                  <circle cx="50" cy="150" r="8" fill="#667eea"/>
+                  <path d="M 50 200 L 95 200" stroke="#667eea" strokeWidth="4" markerEnd="url(#arrowhead-start)"/>
+                  <circle cx="50" cy="200" r="10" fill="#667eea"/>
                 </g>
                 
                 <defs>
-                  <marker id="arrowhead-start" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-                    <polygon points="0 0, 10 3, 0 6" fill="#667eea"/>
+                  <marker id="arrowhead-start" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <polygon points="0 0, 12 4, 0 8" fill="#667eea"/>
                   </marker>
                 </defs>
                 
