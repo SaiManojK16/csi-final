@@ -116,8 +116,10 @@ const FASimulation = () => {
   // Sync tour active state with ref
   useEffect(() => {
     const checkTourState = () => {
-      if (tourRef.current && tourRef.current.isActive !== undefined) {
-        setIsTourActive(tourRef.current.isActive);
+      // tourRef.current is the ref object, tourRef.current.current has the methods
+      const tourMethods = tourRef.current?.current;
+      if (tourMethods && tourMethods.isActive !== undefined) {
+        setIsTourActive(tourMethods.isActive);
       }
     };
     
@@ -786,8 +788,14 @@ const FASimulation = () => {
                         <button 
                           className="tutorial-skip-btn"
                           onClick={() => {
-                            if (tourRef.current && tourRef.current.skipTour) {
-                              tourRef.current.skipTour();
+                            const tourMethods = tourRef.current?.current;
+                            if (tourMethods && typeof tourMethods.skipTour === 'function') {
+                              tourMethods.skipTour();
+                              setIsTourActive(false);
+                            } else {
+                              // Fallback: dispatch event
+                              const event = new CustomEvent('skipTour');
+                              window.dispatchEvent(event);
                               setIsTourActive(false);
                             }
                           }}
@@ -804,31 +812,31 @@ const FASimulation = () => {
                             className="tutorial-start-btn"
                             onClick={() => {
                               console.log('Start Tutorial clicked, tourRef:', tourRef.current);
-                              console.log('tourRef.current.startTour:', tourRef.current?.startTour);
+                              console.log('tourRef.current?.current:', tourRef.current?.current);
+                              console.log('tourRef.current?.current?.startTour:', tourRef.current?.current?.startTour);
                               
                               // Try to start the tour
-                              if (tourRef.current) {
-                                if (typeof tourRef.current.startTour === 'function') {
-                                  try {
-                                    tourRef.current.startTour();
-                                    setIsTourActive(true);
-                                    setActiveLeftTab('question'); // Switch to question after starting
-                                    console.log('Tour started successfully');
-                                  } catch (error) {
-                                    console.error('Error starting tour:', error);
-                                    alert('Failed to start tutorial. Please try again.');
-                                  }
-                                } else {
-                                  console.warn('startTour is not a function:', typeof tourRef.current.startTour);
-                                  // Try alternative: dispatch event
-                                  const event = new CustomEvent('startTour');
-                                  window.dispatchEvent(event);
+                              // tourRef.current is the ref object from AutomataBuilder
+                              // tourRef.current.current is the object with methods from useImperativeHandle
+                              const tourMethods = tourRef.current?.current;
+                              
+                              if (tourMethods && typeof tourMethods.startTour === 'function') {
+                                try {
+                                  tourMethods.startTour();
+                                  setIsTourActive(true);
+                                  setActiveLeftTab('question'); // Switch to question after starting
+                                  console.log('Tour started successfully');
+                                } catch (error) {
+                                  console.error('Error starting tour:', error);
+                                  alert('Failed to start tutorial. Please try again.');
                                 }
                               } else {
-                                console.warn('Tour ref not available');
+                                console.warn('Tour methods not available, trying event fallback');
                                 // Try alternative: dispatch event
                                 const event = new CustomEvent('startTour');
                                 window.dispatchEvent(event);
+                                setIsTourActive(true);
+                                setActiveLeftTab('question');
                               }
                             }}
                           >
@@ -883,10 +891,12 @@ const FASimulation = () => {
             simulationState={simulationState}
             onSimulationStateChange={setSimulationState}
             onTourRef={(ref) => { 
+              console.log('onTourRef called with:', ref);
+              // ref is the ref object from AutomataBuilder, which has .current pointing to GuidedTour methods
               tourRef.current = ref;
               // Update tour active state when ref is set
-              if (ref && ref.isActive !== undefined) {
-                setIsTourActive(ref.isActive);
+              if (ref && ref.current && ref.current.isActive !== undefined) {
+                setIsTourActive(ref.current.isActive);
               }
             }}
             testResults={testResults}
