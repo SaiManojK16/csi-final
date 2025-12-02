@@ -1,0 +1,18 @@
+Milestone 6 Submission Checklist - Team B (SVSMC)
+
+Files to Submit:
+1. TeamB-milestone6-summary.md (or .pdf) - Project summary
+2. TeamB-milestone6-access.md (or .pdf) - Access information
+3. TeamB-milestone6-source.zip - Source code archive
+
+Submission Instructions:
+1. Combine summary and access into one document OR submit separately
+2. Create source code zip file (see instructions below)
+3. Submit to: https://www.dropbox.com/request/1cCNBTfUYDKOCN5J6YPX
+4. Use naming: "TeamB-milestone6" for all files
+
+Source Code Archive Instructions:
+- Only include project files, NOT entire GitHub directory
+- Include: src/, server/, public/, package.json, README.md, etc.
+- Exclude: node_modules/, .git/, build/, .env files
+- See create-source-archive.sh script for automated creation

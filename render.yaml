@@ -19,7 +19,7 @@ services:
       - key: EMAIL_APP_PASSWORD
         sync: false
       - key: FRONTEND_URL
-        value: https://csi-final-crz54vw9q-kadthalamanoj16-4032s-projects.vercel.app
+        value: https://csi-final-4gr04l1n3-kadthalamanoj16-4032s-projects.vercel.app
       - key: REACT_APP_API_URL
-        value: https://acceptly-backend.onrender.com
+        value: https://csi-final.onrender.com
 
