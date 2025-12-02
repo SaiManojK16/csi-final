@@ -267,67 +267,59 @@ const FASimulation = () => {
     }, 300);
   };
 
-  const handlePreviousProblem = useCallback(() => {
+  const handlePreviousProblem = useCallback((e) => {
+    e?.preventDefault();
+    e?.stopPropagation();
     if (currentProblemIndex > 0 && currentProblemIndex <= allProblems.length) {
       const prevProblem = allProblems[currentProblemIndex - 1];
       if (prevProblem && prevProblem.id && prevProblem.id !== problemId) {
-        // Increment navigation counter to force remount
-        navigationCounterRef.current += 1;
-        const timestamp = Date.now();
-        navigate(`/practice/fa/${prevProblem.id}`, { 
-          replace: false, // Use false to allow proper navigation
-          state: { 
-            fromNavigation: true, 
-            timestamp, 
-            navType: 'previous',
-            navCounter: navigationCounterRef.current
+        // Use window.location for immediate navigation if React Router isn't working
+        const newPath = `/practice/fa/${prevProblem.id}`;
+        navigate(newPath, { replace: false });
+        // Force immediate navigation as fallback
+        setTimeout(() => {
+          if (window.location.pathname !== newPath) {
+            window.location.href = newPath;
           }
-        });
-        // Force immediate update
-        window.scrollTo(0, 0);
+        }, 100);
       }
     }
   }, [navigate, allProblems, currentProblemIndex, problemId]);
 
-  const handleNextProblem = useCallback(() => {
+  const handleNextProblem = useCallback((e) => {
+    e?.preventDefault();
+    e?.stopPropagation();
     if (currentProblemIndex >= 0 && currentProblemIndex < allProblems.length - 1) {
       const nextProblem = allProblems[currentProblemIndex + 1];
       if (nextProblem && nextProblem.id && nextProblem.id !== problemId) {
-        // Increment navigation counter to force remount
-        navigationCounterRef.current += 1;
-        const timestamp = Date.now();
-        navigate(`/practice/fa/${nextProblem.id}`, { 
-          replace: false, // Use false to allow proper navigation
-          state: { 
-            fromNavigation: true, 
-            timestamp, 
-            navType: 'next',
-            navCounter: navigationCounterRef.current
+        // Use window.location for immediate navigation if React Router isn't working
+        const newPath = `/practice/fa/${nextProblem.id}`;
+        navigate(newPath, { replace: false });
+        // Force immediate navigation as fallback
+        setTimeout(() => {
+          if (window.location.pathname !== newPath) {
+            window.location.href = newPath;
           }
-        });
-        // Force immediate update
-        window.scrollTo(0, 0);
+        }, 100);
       }
     }
   }, [navigate, allProblems, currentProblemIndex, problemId]);
 
-  const handleRandomProblem = useCallback(() => {
+  const handleRandomProblem = useCallback((e) => {
+    e?.preventDefault();
+    e?.stopPropagation();
     const randomIndex = Math.floor(Math.random() * allProblems.length);
     const randomProblem = allProblems[randomIndex];
     if (randomProblem && randomProblem.id !== problemId) {
-      // Increment navigation counter to force remount
-      navigationCounterRef.current += 1;
-      const timestamp = Date.now();
-      navigate(`/practice/fa/${randomProblem.id}`, { 
-        replace: false, // Use false to allow proper navigation
-        state: { 
-          fromNavigation: true, 
-          timestamp, 
-          navType: 'random',
-          navCounter: navigationCounterRef.current
+      // Use window.location for immediate navigation if React Router isn't working
+      const newPath = `/practice/fa/${randomProblem.id}`;
+      navigate(newPath, { replace: false });
+      // Force immediate navigation as fallback
+      setTimeout(() => {
+        if (window.location.pathname !== newPath) {
+          window.location.href = newPath;
         }
-      });
-      window.scrollTo(0, 0);
+      }, 100);
     }
   }, [navigate, allProblems, problemId]);
 
@@ -508,7 +500,17 @@ const FASimulation = () => {
       <div className="fa-header-leetcode">
         <div className="fa-header-left">
           <button 
-            onClick={() => navigate('/')}
+            onClick={(e) => {
+              e?.preventDefault();
+              e?.stopPropagation();
+              navigate('/');
+              // Force immediate navigation as fallback
+              setTimeout(() => {
+                if (window.location.pathname !== '/') {
+                  window.location.href = '/';
+                }
+              }, 100);
+            }}
             className="header-logo"
             style={{ 
               background: 'none', 
