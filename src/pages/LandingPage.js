@@ -69,12 +69,63 @@ const LandingPage = () => {
               <div className="geometric-shape shape-3"></div>
               <div className="hero-3d-image-wrapper">
                 <img 
-                  src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&h=600&fit=crop&q=80" 
-                  alt="3D Finite Automata Visualization"
+                  src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=800&h=600&fit=crop&q=80" 
+                  alt="3D Finite Automata State Machine Visualization"
                   className="hero-3d-image"
                   onError={(e) => {
-                    // Fallback to a placeholder if image fails to load
-                    e.target.src = 'https://via.placeholder.com/600x400/2ec4b6/ffffff?text=Finite+Automata+3D';
+                    // Fallback: Create a canvas-based FA visualization
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 600;
+                    canvas.height = 400;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Draw a simple FA diagram
+                    ctx.fillStyle = '#2ec4b6';
+                    ctx.strokeStyle = '#1f2a44';
+                    ctx.lineWidth = 3;
+                    
+                    // Draw states (circles)
+                    const states = [
+                      { x: 150, y: 200, label: 'q0', isAccepting: false },
+                      { x: 300, y: 150, label: 'q1', isAccepting: false },
+                      { x: 450, y: 200, label: 'q2', isAccepting: true }
+                    ];
+                    
+                    states.forEach(state => {
+                      ctx.beginPath();
+                      ctx.arc(state.x, state.y, 40, 0, 2 * Math.PI);
+                      ctx.fill();
+                      ctx.stroke();
+                      
+                      if (state.isAccepting) {
+                        ctx.beginPath();
+                        ctx.arc(state.x, state.y, 50, 0, 2 * Math.PI);
+                        ctx.stroke();
+                      }
+                      
+                      ctx.fillStyle = '#ffffff';
+                      ctx.font = 'bold 20px Arial';
+                      ctx.textAlign = 'center';
+                      ctx.fillText(state.label, state.x, state.y + 7);
+                      ctx.fillStyle = '#2ec4b6';
+                    });
+                    
+                    // Draw transitions
+                    ctx.strokeStyle = '#1f2a44';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(190, 200);
+                    ctx.lineTo(260, 170);
+                    ctx.stroke();
+                    ctx.fillText('0', 225, 180);
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(340, 150);
+                    ctx.lineTo(410, 190);
+                    ctx.stroke();
+                    ctx.fillText('1', 375, 170);
+                    
+                    e.target.src = canvas.toDataURL();
                   }}
                 />
               </div>
