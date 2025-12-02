@@ -32,7 +32,7 @@ export const GuidedTour = ({
   // Use external completedTasks if provided, otherwise use internal state
   const completedTasks = externalCompletedTasks !== undefined ? externalCompletedTasks : internalCompletedTasks;
   
-  // Expose startTour method via ref
+  // Expose startTour and skipTour methods via ref
   useImperativeHandle(onTourStartRef, () => ({
     startTour: () => {
       console.log('startTour called via ref');
@@ -44,8 +44,16 @@ export const GuidedTour = ({
       }
       // Clear localStorage to allow tour to show again
       localStorage.removeItem(storageKey);
-    }
-  }), [externalCompletedTasks, storageKey]);
+    },
+    skipTour: () => {
+      console.log('skipTour called via ref');
+      setIsActive(false);
+      setShowWelcomeModal(false);
+      localStorage.setItem(storageKey, 'true');
+      onSkip?.();
+    },
+    isActive: isActive
+  }), [externalCompletedTasks, storageKey, isActive, onSkip]);
 
   // Check if tour has been completed before
   useEffect(() => {
