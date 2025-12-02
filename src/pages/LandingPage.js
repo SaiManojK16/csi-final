@@ -67,17 +67,16 @@ const LandingPage = () => {
               <div className="geometric-shape shape-1"></div>
               <div className="geometric-shape shape-2"></div>
               <div className="geometric-shape shape-3"></div>
-              <div className="student-illustration">
-                <div className="laptop-screen">
-                  <div className="code-line"></div>
-                  <div className="code-line"></div>
-                  <div className="code-line"></div>
-                  <div className="automata-visual">
-                    <div className="state-node">q0</div>
-                    <div className="transition-arrow">→</div>
-                    <div className="state-node accept">q1</div>
-                  </div>
-                </div>
+              <div className="hero-3d-image-wrapper">
+                <img 
+                  src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&h=600&fit=crop&q=80" 
+                  alt="3D Finite Automata Visualization"
+                  className="hero-3d-image"
+                  onError={(e) => {
+                    // Fallback to a placeholder if image fails to load
+                    e.target.src = 'https://via.placeholder.com/600x400/2ec4b6/ffffff?text=Finite+Automata+3D';
+                  }}
+                />
               </div>
             </div>
           </div>
