@@ -49,6 +49,7 @@ const FASimulation = () => {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const [profileEditOpen, setProfileEditOpen] = useState(false);
   const [isTourActive, setIsTourActive] = useState(false); // Track tour active state
+  const [tourStepData, setTourStepData] = useState(null); // Current step data for inline display
   const profileRef = useRef(null);
 
   // Handle test results from AutomataBuilder
@@ -113,13 +114,29 @@ const FASimulation = () => {
     testStringFnRef.current = testStringFn;
   }, [testStringFn]);
 
-  // Sync tour active state with ref
+  // Sync tour active state and step data with ref
   useEffect(() => {
     const checkTourState = () => {
       // tourRef.current is the ref object, tourRef.current.current has the methods
       const tourMethods = tourRef.current?.current;
-      if (tourMethods && tourMethods.isActive !== undefined) {
-        setIsTourActive(tourMethods.isActive);
+      if (tourMethods) {
+        if (tourMethods.isActive !== undefined) {
+          setIsTourActive(tourMethods.isActive);
+        }
+        // Update step data for inline display
+        if (tourMethods.isActive && tourMethods.currentStepData) {
+          // Import FASimulationSteps to get total steps count
+          const { FASimulationSteps } = require('../tours/FASimulationTour');
+          setTourStepData({
+            currentStep: tourMethods.currentStep || 0,
+            step: tourMethods.currentStepData,
+            totalSteps: FASimulationSteps.length,
+            completedTasks: tourMethods.completedTasks || new Set(),
+            canProceed: tourMethods.canProceed !== undefined ? tourMethods.canProceed : true
+          });
+        } else if (!tourMethods.isActive) {
+          setTourStepData(null);
+        }
       }
     };
     
@@ -127,10 +144,10 @@ const FASimulation = () => {
     checkTourState();
     
     // Check periodically to sync state (in case tour state changes externally)
-    const interval = setInterval(checkTourState, 500);
+    const interval = setInterval(checkTourState, 300);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [problemId]);
 
   // Resize handler for bottom panel
   const handleMouseDown = useCallback((e) => {
@@ -785,26 +802,120 @@ const FASimulation = () => {
                     <p>Follow the steps below to learn how to build Finite Automata.</p>
                   </div>
                   <div className="tutorial-steps-list">
-                    {isTourActive ? (
-                      <div className="tutorial-active">
-                        <p>Tutorial is currently active. Follow the instructions on the canvas.</p>
-                        <button 
-                          className="tutorial-skip-btn"
-                          onClick={() => {
-                            const tourMethods = tourRef.current?.current;
-                            if (tourMethods && typeof tourMethods.skipTour === 'function') {
-                              tourMethods.skipTour();
-                              setIsTourActive(false);
-                            } else {
-                              // Fallback: dispatch event
-                              const event = new CustomEvent('skipTour');
-                              window.dispatchEvent(event);
-                              setIsTourActive(false);
-                            }
-                          }}
-                        >
-                          Skip Tutorial
-                        </button>
+                    {isTourActive && tourStepData ? (
+                      <div className="tutorial-step-content">
+                        <div className="tutorial-step-header">
+                          <div className="tutorial-step-indicator">
+                            <span className="tutorial-step-number">Step {tourStepData.currentStep + 1} of {tourStepData.totalSteps}</span>
+                          </div>
+                          <h4 className="tutorial-step-title">{tourStepData.step.title}</h4>
+                          <button 
+                            className="tutorial-close-btn"
+                            onClick={() => {
+                              const tourMethods = tourRef.current?.current;
+                              if (tourMethods && typeof tourMethods.skipTour === 'function') {
+                                tourMethods.skipTour();
+                                setIsTourActive(false);
+                                setTourStepData(null);
+                              } else {
+                                const event = new CustomEvent('skipTour');
+                                window.dispatchEvent(event);
+                                setIsTourActive(false);
+                                setTourStepData(null);
+                              }
+                            }}
+                            title="Skip Tutorial"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        <div className="tutorial-step-body">
+                          <p className="tutorial-step-description">{tourStepData.step.description}</p>
+                          
+                          {tourStepData.step.task && (
+                            <div className={`tutorial-step-task ${tourStepData.completedTasks?.has(tourStepData.step.taskId) ? 'completed' : ''}`}>
+                              <div className="tutorial-task-header">
+                                <span className="tutorial-task-icon">
+                                  {tourStepData.completedTasks?.has(tourStepData.step.taskId) ? '✓' : '📝'}
+                                </span>
+                                <h5 className="tutorial-task-title">
+                                  {tourStepData.completedTasks?.has(tourStepData.step.taskId) ? 'Task Completed!' : 'Your Task:'}
+                                </h5>
+                              </div>
+                              <p className="tutorial-task-description">{tourStepData.step.task}</p>
+                            </div>
+                          )}
+                          
+                          {tourStepData.step.hint && (
+                            <div className="tutorial-step-hint">
+                              <span className="tutorial-hint-icon">💡</span>
+                              <span>{tourStepData.step.hint}</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="tutorial-step-footer">
+                          <div className="tutorial-progress-dots">
+                            {Array.from({ length: tourStepData.totalSteps }).map((_, index) => (
+                              <div
+                                key={index}
+                                className={`tutorial-progress-dot ${
+                                  index === tourStepData.currentStep ? 'active' : ''
+                                } ${index < tourStepData.currentStep ? 'completed' : ''}`}
+                              />
+                            ))}
+                          </div>
+                          <div className="tutorial-step-actions">
+                            <button
+                              className="tutorial-btn tutorial-btn-skip"
+                              onClick={() => {
+                                const tourMethods = tourRef.current?.current;
+                                if (tourMethods && typeof tourMethods.skipTour === 'function') {
+                                  tourMethods.skipTour();
+                                  setIsTourActive(false);
+                                  setTourStepData(null);
+                                } else {
+                                  const event = new CustomEvent('skipTour');
+                                  window.dispatchEvent(event);
+                                  setIsTourActive(false);
+                                  setTourStepData(null);
+                                }
+                              }}
+                            >
+                              Skip
+                            </button>
+                            {tourStepData.currentStep > 0 && (
+                              <button
+                                className="tutorial-btn tutorial-btn-prev"
+                                onClick={() => {
+                                  const tourMethods = tourRef.current?.current;
+                                  if (tourMethods && typeof tourMethods.prevStep === 'function') {
+                                    tourMethods.prevStep();
+                                  }
+                                }}
+                              >
+                                ← Previous
+                              </button>
+                            )}
+                            <button
+                              className={`tutorial-btn ${tourStepData.currentStep === tourStepData.totalSteps - 1 ? 'tutorial-btn-finish' : 'tutorial-btn-next'}`}
+                              onClick={() => {
+                                const tourMethods = tourRef.current?.current;
+                                if (tourMethods && typeof tourMethods.nextStep === 'function') {
+                                  if (tourStepData.currentStep === tourStepData.totalSteps - 1) {
+                                    // Tour completed
+                                    tourMethods.skipTour();
+                                    setIsTourActive(false);
+                                    setTourStepData(null);
+                                  } else {
+                                    tourMethods.nextStep();
+                                  }
+                                }
+                              }}
+                            >
+                              {tourStepData.currentStep === tourStepData.totalSteps - 1 ? 'Finish' : 'Next →'}
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     ) : (
                       <>
@@ -815,19 +926,13 @@ const FASimulation = () => {
                             className="tutorial-start-btn"
                             onClick={() => {
                               console.log('Start Tutorial clicked, tourRef:', tourRef.current);
-                              console.log('tourRef.current?.current:', tourRef.current?.current);
-                              console.log('tourRef.current?.current?.startTour:', tourRef.current?.current?.startTour);
-                              
-                              // Try to start the tour
-                              // tourRef.current is the ref object from AutomataBuilder
-                              // tourRef.current.current is the object with methods from useImperativeHandle
                               const tourMethods = tourRef.current?.current;
                               
                               if (tourMethods && typeof tourMethods.startTour === 'function') {
                                 try {
                                   tourMethods.startTour();
                                   setIsTourActive(true);
-                                  setActiveLeftTab('question'); // Switch to question after starting
+                                  // Don't switch tabs - keep tutorial panel open
                                   console.log('Tour started successfully');
                                 } catch (error) {
                                   console.error('Error starting tour:', error);
@@ -835,11 +940,9 @@ const FASimulation = () => {
                                 }
                               } else {
                                 console.warn('Tour methods not available, trying event fallback');
-                                // Try alternative: dispatch event
                                 const event = new CustomEvent('startTour');
                                 window.dispatchEvent(event);
                                 setIsTourActive(true);
-                                setActiveLeftTab('question');
                               }
                             }}
                           >
@@ -898,8 +1001,20 @@ const FASimulation = () => {
               // ref is the ref object from AutomataBuilder, which has .current pointing to GuidedTour methods
               tourRef.current = ref;
               // Update tour active state when ref is set
-              if (ref && ref.current && ref.current.isActive !== undefined) {
-                setIsTourActive(ref.current.isActive);
+              if (ref && ref.current) {
+                if (ref.current.isActive !== undefined) {
+                  setIsTourActive(ref.current.isActive);
+                }
+                // Update step data for inline display
+                if (ref.current.currentStepData) {
+                  setTourStepData({
+                    currentStep: ref.current.currentStep || 0,
+                    step: ref.current.currentStepData,
+                    totalSteps: ref.current.currentStepData ? (tourRef.current?.current?.totalSteps || 0) : 0,
+                    completedTasks: ref.current.completedTasks || new Set(),
+                    canProceed: ref.current.canProceed !== undefined ? ref.current.canProceed : true
+                  });
+                }
               }
             }}
             testResults={testResults}

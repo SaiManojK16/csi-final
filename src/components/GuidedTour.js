@@ -15,7 +15,9 @@ export const GuidedTour = ({
   storageKey = 'guided-tour-completed',
   completedTasks: externalCompletedTasks,
   onTaskComplete,
-  onTourStartRef // Ref to expose startTour method
+  onTourStartRef, // Ref to expose startTour method
+  renderInline = false, // If true, don't render overlay/tooltip, just expose step data
+  onStepChange // Callback when step changes, for inline rendering
 }) => {
   const [isActive, setIsActive] = useState(false);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
@@ -52,8 +54,14 @@ export const GuidedTour = ({
       localStorage.setItem(storageKey, 'true');
       onSkip?.();
     },
-    isActive: isActive
-  }), [externalCompletedTasks, storageKey, isActive, onSkip]);
+    isActive: isActive,
+    currentStep: currentStep,
+    currentStepData: steps[currentStep] || null,
+    completedTasks: completedTasks,
+    nextStep: nextStep,
+    prevStep: prevStep,
+    canProceed: canProceed
+  }), [externalCompletedTasks, storageKey, isActive, onSkip, currentStep, steps, completedTasks]);
   
   // Notify parent when tour active state changes
   useEffect(() => {

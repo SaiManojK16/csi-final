@@ -630,6 +630,7 @@ const AutomataBuilder = ({ problem, problemId, onTestResultsUpdate, onTestString
         onSkip={() => console.log('Tour skipped')}
         onTourStartRef={tourRef}
         showWelcome={false} // Don't show welcome modal - tutorial is accessed via tab
+        renderInline={true} // Render inline in tutorial panel, not as popup
       />
       
     </div>
