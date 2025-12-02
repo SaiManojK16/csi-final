@@ -111,9 +111,9 @@ export const GuidedTour = ({
   const modifiedElementsRef = useRef([]);
   
   // Calculate positions when step changes
-  // Skip position calculations if rendering inline (no overlay needed)
+  // When renderInline is true, we still need position calculations for spotlight highlighting
   useEffect(() => {
-    if (renderInline || !isActive || !steps[currentStep]) return;
+    if (!isActive || !steps[currentStep]) return;
 
     // Cleanup previous element modifications
     modifiedElementsRef.current.forEach(({ element, originalStyles }) => {
