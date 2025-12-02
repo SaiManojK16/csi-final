@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import FeatureCardFlip from '../components/FeatureCardFlip';
 import InteractiveFAPlayground from '../components/InteractiveFAPlayground';
-import FA3DVisualization from '../components/FA3DVisualization';
 import './LandingPage.css';
 
 const LandingPage = () => {
@@ -63,14 +62,6 @@ const LandingPage = () => {
               <span className="binary-code code-1">1<span className="highlight-binary">0</span>0</span>
               <span className="binary-code code-2">10<span className="highlight-binary">1</span>0</span>
               <span className="binary-code code-3"><span className="highlight-binary">0</span>01</span>
-            </div>
-            <div className="hero-image-container">
-              <div className="geometric-shape shape-1"></div>
-              <div className="geometric-shape shape-2"></div>
-              <div className="geometric-shape shape-3"></div>
-              <div className="hero-3d-image-wrapper">
-                <FA3DVisualization />
-              </div>
             </div>
           </div>
         </div>
