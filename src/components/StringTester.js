@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './StringTester.css';
 
 const StringTester = ({ onTestString, states, startState, transitions, onTestResultsUpdate, onSimulationStateChange, problem, activeTab, setActiveTab }) => {
@@ -6,6 +6,20 @@ const StringTester = ({ onTestString, states, startState, transitions, onTestRes
   const [isRunning, setIsRunning] = useState(false);
   const [currentTestIndex, setCurrentTestIndex] = useState(-1);
   const [selectedTestCaseIndex, setSelectedTestCaseIndex] = useState(0);
+  
+  // Use refs to store latest values for event listener
+  const onTestStringRef = useRef(onTestString);
+  const onSimulationStateChangeRef = useRef(onSimulationStateChange);
+  const onTestResultsUpdateRef = useRef(onTestResultsUpdate);
+  const setActiveTabRef = useRef(setActiveTab);
+  
+  // Update refs when props change
+  useEffect(() => {
+    onTestStringRef.current = onTestString;
+    onSimulationStateChangeRef.current = onSimulationStateChange;
+    onTestResultsUpdateRef.current = onTestResultsUpdate;
+    setActiveTabRef.current = setActiveTab;
+  }, [onTestString, onSimulationStateChange, onTestResultsUpdate, setActiveTab]);
 
   // Use test cases from problem if available, otherwise use default
   const defaultTestCases = [
