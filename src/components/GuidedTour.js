@@ -74,14 +74,19 @@ export const GuidedTour = ({
   }, [isActive, onTourStartRef]);
 
   // Check if tour has been completed before
-  // Don't show welcome modal if tutorial is accessed via tab (showWelcome will be false)
+  // Don't show welcome modal if tutorial is accessed via tab (showWelcome will be false) or if rendering inline
   useEffect(() => {
+    // Never show welcome modal if rendering inline
+    if (renderInline) {
+      setShowWelcomeModal(false);
+      return;
+    }
     const hasCompleted = localStorage.getItem(storageKey);
     // Only show welcome modal if showWelcome is true (not accessed via tab)
     if (!hasCompleted && showWelcome && !isActive) {
       setShowWelcomeModal(true);
     }
-  }, [storageKey, showWelcome, isActive]);
+  }, [storageKey, showWelcome, isActive, renderInline]);
 
   // Listen for startTour custom event as fallback
   useEffect(() => {
