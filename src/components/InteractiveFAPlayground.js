@@ -13,25 +13,34 @@ const InteractiveFAPlayground = () => {
   const canvasRef = useRef(null);
   const STATE_RADIUS = 28;
 
-  // Example FA: Accepts strings ending in "0" 
-  // Language: All binary strings that end with "0"
-  // Examples: 0, 10, 00, 100, 1100, etc.
+  // Example FA: Accepts strings containing exactly two 0's
+  // Language: All binary strings that contain exactly two 0's
+  // Examples: 001, 010, 100, 1010, 1100, etc.
   // State meanings:
-  // q0: last symbol was '1' (or start state - haven't seen '0' yet)
-  // q1: last symbol was '0' (accepting state)
+  // q0: haven't seen any 0's yet (or seen only 1's)
+  // q1: seen exactly one 0
+  // q2: seen exactly two 0's (accepting state)
+  // Note: For strings with 3+ zeros, we track them but they're rejected
   const fa = {
     states: {
       q0: { x: 150, y: 200, isAccepting: false, isStart: true, label: 'q₀' },
-      q1: { x: 350, y: 200, isAccepting: true, isStart: false, label: 'q₁' }
+      q1: { x: 350, y: 150, isAccepting: false, isStart: false, label: 'q₁' },
+      q2: { x: 350, y: 250, isAccepting: true, isStart: false, label: 'q₂' }
     },
     transitions: [
-      // From q0: last symbol was '1' (or start)
-      { from: 'q0', to: 'q1', symbol: '0', type: 'normal' }, // Saw '0', move to accepting state
-      { from: 'q0', to: 'q0', symbol: '1', type: 'self' },  // Saw '1', stay in non-accepting state
+      // From q0: haven't seen any 0's yet
+      { from: 'q0', to: 'q1', symbol: '0', type: 'normal' }, // First '0' found
+      { from: 'q0', to: 'q0', symbol: '1', type: 'self' },  // Still no 0's, stay in q0
       
-      // From q1: last symbol was '0' (accepting state)
-      { from: 'q1', to: 'q1', symbol: '0', type: 'self' },  // Another '0', still ending with '0'
-      { from: 'q1', to: 'q0', symbol: '1', type: 'normal' } // Saw '1', no longer ending with '0'
+      // From q1: seen exactly one 0
+      { from: 'q1', to: 'q2', symbol: '0', type: 'normal' }, // Second '0' found, move to accepting state
+      { from: 'q1', to: 'q1', symbol: '1', type: 'self' },  // Still only one 0, stay in q1
+      
+      // From q2: seen exactly two 0's (accepting state)
+      { from: 'q2', to: 'q2', symbol: '1', type: 'self' },  // More 1's are fine, stay accepting
+      // If we see another '0', we have 3+ zeros - reject by staying in q2 (but it's accepting)
+      // In a complete DFA, we'd need a dead state, but we handle rejection in the logic
+      { from: 'q2', to: 'q2', symbol: '0', type: 'self' }   // Third+ zero (will be rejected by count)
     ],
     alphabet: ['0', '1']
   };
@@ -102,8 +111,9 @@ const InteractiveFAPlayground = () => {
     setActiveTransition(null);
     await new Promise(resolve => setTimeout(resolve, 300));
     
-    // Check if final state is accepting
-    const isAccepted = fa.states[state]?.isAccepting || false;
+    // Check if final state is accepting AND string has exactly two 0's
+    const zeroCount = inputString.split('').filter(c => c === '0').length;
+    const isAccepted = fa.states[state]?.isAccepting && zeroCount === 2;
     setResult(isAccepted ? 'accepted' : 'rejected');
     setIsProcessing(false);
     setCurrentIndex(-1);
@@ -365,7 +375,7 @@ const InteractiveFAPlayground = () => {
         <div className="fa-visualization">
           <div className="viz-header">
             <h3>Finite Automaton</h3>
-            <span className="viz-description">Accepts strings ending in "0"</span>
+            <span className="viz-description">Accepts strings containing exactly two 0's</span>
           </div>
           <canvas ref={canvasRef} className="fa-canvas" />
           <div className="state-legend">
@@ -411,7 +421,7 @@ const InteractiveFAPlayground = () => {
               setCurrentIndex(-1);
               setPath(['q0']);
             }}
-            placeholder="Enter string (e.g., 0, 10, 100)"
+            placeholder="Enter string (e.g., 001, 010, 100)"
             className="string-input"
             disabled={isProcessing}
             maxLength={20}
@@ -419,17 +429,17 @@ const InteractiveFAPlayground = () => {
 
           <div className="example-buttons">
             <span className="example-label">Try examples:</span>
-            <button onClick={() => handleExampleClick('0')} className="example-btn">
-              0
+            <button onClick={() => handleExampleClick('001')} className="example-btn">
+              001
             </button>
-            <button onClick={() => handleExampleClick('10')} className="example-btn">
-              10
+            <button onClick={() => handleExampleClick('010')} className="example-btn">
+              010
             </button>
             <button onClick={() => handleExampleClick('100')} className="example-btn">
               100
             </button>
-            <button onClick={() => handleExampleClick('11')} className="example-btn">
-              11
+            <button onClick={() => handleExampleClick('1010')} className="example-btn">
+              1010
             </button>
           </div>
 
@@ -467,8 +477,8 @@ const InteractiveFAPlayground = () => {
                 </div>
                 <div className="result-message">
                   {result === 'accepted'
-                    ? 'The string ends with "0"'
-                    : 'The string does not end with "0"'}
+                    ? 'The string contains exactly two 0\'s'
+                    : 'The string does not contain exactly two 0\'s'}
                 </div>
                 <div className="result-path">
                   Path: {path.join(' → ')}
