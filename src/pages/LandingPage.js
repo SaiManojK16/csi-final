@@ -97,19 +97,19 @@ const LandingPage = () => {
                   <text x="350" y="210" textAnchor="middle" fill="#fff" fontSize="26" fontWeight="bold" fontFamily="Arial">q₁</text>
                 </g>
                 
-                {/* Transitions - improved curves */}
+                {/* Transitions - straight lines between states, circular self-loops */}
                 <g id="transitions">
-                  {/* Transition from q0 to q1 (symbol: 0) */}
-                  <path d="M 205 200 Q 250 150 295 200" fill="none" stroke="#2ec4b6" strokeWidth="4" opacity="0.8" markerEnd="url(#arrowhead)"/>
+                  {/* Straight transition from q0 to q1 (symbol: 0) */}
+                  <line x1="205" y1="200" x2="295" y2="200" stroke="url(#grad3)" strokeWidth="4" opacity="0.8" markerEnd="url(#arrowhead)"/>
                   
-                  {/* Self-loop on q0 (symbol: 1) */}
-                  <path d="M 150 145 Q 80 120 80 200 Q 80 280 150 255" fill="none" stroke="#667eea" strokeWidth="3.5" opacity="0.7" markerEnd="url(#arrowhead-self)"/>
+                  {/* Circular self-loop on q0 (symbol: 1) */}
+                  <ellipse cx="150" cy="200" rx="40" ry="25" fill="none" stroke="url(#grad1)" strokeWidth="3.5" opacity="0.7" markerEnd="url(#arrowhead-self)" transform="rotate(-45 150 200)"/>
                   
-                  {/* Self-loop on q1 (symbol: 0) */}
-                  <path d="M 350 145 Q 420 120 420 200 Q 420 280 350 255" fill="none" stroke="#ff8a65" strokeWidth="3.5" opacity="0.7" markerEnd="url(#arrowhead-self)"/>
+                  {/* Circular self-loop on q1 (symbol: 0) */}
+                  <ellipse cx="350" cy="200" rx="40" ry="25" fill="none" stroke="url(#grad2)" strokeWidth="3.5" opacity="0.7" markerEnd="url(#arrowhead-self)" transform="rotate(45 350 200)"/>
                   
-                  {/* Transition from q1 to q0 (symbol: 1) */}
-                  <path d="M 295 200 Q 250 250 205 200" fill="none" stroke="#2ec4b6" strokeWidth="4" opacity="0.8" markerEnd="url(#arrowhead)"/>
+                  {/* Transition from q1 to q0 (symbol: 1) - curved below */}
+                  <path d="M 295 200 Q 250 250 205 200" fill="none" stroke="url(#grad3)" strokeWidth="4" opacity="0.8" markerEnd="url(#arrowhead)"/>
                 </g>
                 
                 {/* Arrow markers */}
@@ -124,21 +124,21 @@ const LandingPage = () => {
                 
                 {/* Symbol labels */}
                 <g id="symbols">
-                  {/* Symbol 0 on q0->q1 transition */}
-                  <circle cx="250" cy="160" r="22" fill="#fff" stroke="#2ec4b6" strokeWidth="2.5"/>
-                  <text x="250" y="168" textAnchor="middle" fill="#2ec4b6" fontSize="20" fontWeight="bold" fontFamily="Arial">0</text>
+                  {/* Symbol 0 on q0->q1 transition (straight line) */}
+                  <circle cx="250" cy="180" r="22" fill="#fff" stroke="#2ec4b6" strokeWidth="2.5"/>
+                  <text x="250" y="188" textAnchor="middle" fill="#2ec4b6" fontSize="20" fontWeight="bold" fontFamily="Arial">0</text>
                   
                   {/* Symbol 1 on q0 self-loop */}
-                  <circle cx="70" cy="200" r="20" fill="#fff" stroke="#667eea" strokeWidth="2.5"/>
-                  <text x="70" y="208" textAnchor="middle" fill="#667eea" fontSize="18" fontWeight="bold" fontFamily="Arial">1</text>
+                  <circle cx="120" cy="170" r="20" fill="#fff" stroke="#667eea" strokeWidth="2.5"/>
+                  <text x="120" y="178" textAnchor="middle" fill="#667eea" fontSize="18" fontWeight="bold" fontFamily="Arial">1</text>
                   
                   {/* Symbol 0 on q1 self-loop */}
-                  <circle cx="430" cy="200" r="20" fill="#fff" stroke="#ff8a65" strokeWidth="2.5"/>
-                  <text x="430" y="208" textAnchor="middle" fill="#ff8a65" fontSize="18" fontWeight="bold" fontFamily="Arial">0</text>
+                  <circle cx="380" cy="170" r="20" fill="#fff" stroke="#ff8a65" strokeWidth="2.5"/>
+                  <text x="380" y="178" textAnchor="middle" fill="#ff8a65" fontSize="18" fontWeight="bold" fontFamily="Arial">0</text>
                   
-                  {/* Symbol 1 on q1->q0 transition */}
-                  <circle cx="250" cy="240" r="22" fill="#fff" stroke="#2ec4b6" strokeWidth="2.5"/>
-                  <text x="250" y="248" textAnchor="middle" fill="#2ec4b6" fontSize="20" fontWeight="bold" fontFamily="Arial">1</text>
+                  {/* Symbol 1 on q1->q0 transition (curved below) */}
+                  <circle cx="250" cy="250" r="22" fill="#fff" stroke="#2ec4b6" strokeWidth="2.5"/>
+                  <text x="250" y="258" textAnchor="middle" fill="#2ec4b6" fontSize="20" fontWeight="bold" fontFamily="Arial">1</text>
                 </g>
                 
                 {/* Start indicator - only for q0 */}
