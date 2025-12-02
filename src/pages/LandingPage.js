@@ -84,17 +84,15 @@ const LandingPage = () => {
                 
                 {/* Abstract geometric shapes representing states */}
                 <g id="states">
-                  {/* State 1 - Large circle */}
+                  {/* State 1 - Circle */}
                   <circle cx="150" cy="150" r="60" fill="url(#grad1)" opacity="0.9" filter="url(#glow)"/>
                   <circle cx="150" cy="150" r="50" fill="none" stroke="#fff" strokeWidth="2" opacity="0.6"/>
                   <text x="150" y="160" textAnchor="middle" fill="#fff" fontSize="28" fontWeight="bold" fontFamily="Arial">q₀</text>
                   
-                  {/* State 2 - Hexagon */}
-                  <g transform="translate(350, 150)">
-                    <polygon points="-40,-30 40,-30 60,0 40,30 -40,30 -60,0" fill="url(#grad2)" opacity="0.9" filter="url(#glow)"/>
-                    <polygon points="-35,-25 35,-25 50,0 35,25 -35,25 -50,0" fill="none" stroke="#fff" strokeWidth="2" opacity="0.6"/>
-                    <text x="0" y="10" textAnchor="middle" fill="#fff" fontSize="24" fontWeight="bold" fontFamily="Arial">q₁</text>
-                  </g>
+                  {/* State 2 - Circle */}
+                  <circle cx="350" cy="150" r="60" fill="url(#grad2)" opacity="0.9" filter="url(#glow)"/>
+                  <circle cx="350" cy="150" r="50" fill="none" stroke="#fff" strokeWidth="2" opacity="0.6"/>
+                  <text x="350" y="160" textAnchor="middle" fill="#fff" fontSize="28" fontWeight="bold" fontFamily="Arial">q₁</text>
                 </g>
                 
                 {/* Transitions - flowing lines */}
