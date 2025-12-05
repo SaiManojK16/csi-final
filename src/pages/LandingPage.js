@@ -161,7 +161,6 @@ const LandingPage = () => {
           <div className="footer-section">
             <h4>Project Info</h4>
             <ul className="footer-links">
-              <li>CS5610 - Web Development</li>
               <li>Drill & Practice System</li>
               <li>Team B</li>
               <li className="footer-cta-small">
